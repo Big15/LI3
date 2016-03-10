@@ -15,7 +15,6 @@ void *ler_clientes(Clientes *CC, char *filename) {
         while (fgets(s, X, f)) {
             cod = strtok(s, "\r\n");
             insert_clientes(CC, cod);
-            //cod = (char*) malloc (10);
             lidos++;
         }        
     }
@@ -87,37 +86,16 @@ int ler_vendas(char * filename) {
 
 
 int main() {	
-        Clientes *CClientes;
+        Clientes *CClientes = criar_clientes();
         
-        CClientes = criar_clientes();
         
-	//ler_clientes(CClientes, "Clientes.txt");
+	ler_clientes(CClientes, "Clientes.txt");
 	ler_produtos("Produtos.txt");
 	ler_vendas("Vendas_1M.txt");                  
         
-        char* aux = "A";
-        insert_clientes(CClientes, aux);
-        
-        aux = "B";
-        insert_clientes(CClientes, aux);
-        
-        aux = "C";
-        insert_clientes(CClientes, aux);
-        
-        aux = "D";
-        insert_clientes(CClientes, aux);
-        
-        aux = "E";
-        insert_clientes(CClientes, aux);
-        
-        //memset(aux, NULL, 10);
-        
-        //char* aux2 = "BLAH2!";
-        //insert_clientes(CClientes, aux2);
         
         print_whole_tree(CClientes->tree, "Cenas");
-        //printf("%s\n", CClientes->lista->cod);
-        printf("N: %d\n", CClientes->tree->avl_count);
+        printf("N: %d\n", (int) CClientes->tree->avl_count);
         printf("END\n");
         return 0;
 	}

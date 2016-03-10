@@ -19,17 +19,10 @@ compare_ints (const void *pa, const void *pb, void *param)
 }
 
 int compare_strings (const void *pa, const void *pb){
-    const char *a;
-    strcpy(a, pa);
-    const char *b;
-    strcpy(b, pb);
+    const char **a = pa;
+    const char **b = pb;
     
-    return strcmp(a, b);
-}
-
-int compare_strings2 (char *pa, char *pb){
-    
-    return strcmp(pb, pa);
+    return strcmp(*a, *b);
 }
 
 print_tree_structure (const struct avl_node *node, int level)
@@ -76,8 +69,9 @@ Clientes *criar_clientes(){
     LClientes *list;    
     Clientes *clientes;
     
-    tree = avl_create (compare_strings2, NULL, NULL);
+    tree = avl_create (compare_strings, NULL, NULL);
     list = (LClientes*) malloc(sizeof(LClientes));
+    list = NULL;
     clientes = (Clientes*) malloc(sizeof(Clientes));
     
     clientes->lista = list;
@@ -93,7 +87,6 @@ void *insert_clientes (Clientes *clientes, char* st){
     strcpy(cliente->cod, st);
     cliente->next = clientes->lista;
     clientes->lista = cliente;
-    printf("%s\n", cliente->cod);
     
     avl_insert(clientes->tree, &cliente->cod); 
             
