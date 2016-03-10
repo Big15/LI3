@@ -35,9 +35,9 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/a8c0f8c0/CatC.o \
-	${OBJECTDIR}/_ext/a8c0f8c0/avl.o \
-	${OBJECTDIR}/_ext/a8c0f8c0/main.o
+	${OBJECTDIR}/CatC.o \
+	${OBJECTDIR}/avl.o \
+	${OBJECTDIR}/main.o
 
 
 # C Compiler Flags
@@ -64,20 +64,20 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/li3: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/li3 ${OBJECTFILES} ${LDLIBSOPTIONS}
 
-${OBJECTDIR}/_ext/a8c0f8c0/CatC.o: ../../Desktop/Univ/LI3/CatC.c 
-	${MKDIR} -p ${OBJECTDIR}/_ext/a8c0f8c0
+${OBJECTDIR}/CatC.o: CatC.c 
+	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/a8c0f8c0/CatC.o ../../Desktop/Univ/LI3/CatC.c
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/CatC.o CatC.c
 
-${OBJECTDIR}/_ext/a8c0f8c0/avl.o: ../../Desktop/Univ/LI3/avl.c 
-	${MKDIR} -p ${OBJECTDIR}/_ext/a8c0f8c0
+${OBJECTDIR}/avl.o: avl.c 
+	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/a8c0f8c0/avl.o ../../Desktop/Univ/LI3/avl.c
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/avl.o avl.c
 
-${OBJECTDIR}/_ext/a8c0f8c0/main.o: ../../Desktop/Univ/LI3/main.c 
-	${MKDIR} -p ${OBJECTDIR}/_ext/a8c0f8c0
+${OBJECTDIR}/main.o: main.c 
+	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/a8c0f8c0/main.o ../../Desktop/Univ/LI3/main.c
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.c
 
 # Subprojects
 .build-subprojects:
