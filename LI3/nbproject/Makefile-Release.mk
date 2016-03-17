@@ -36,6 +36,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/CatC.o \
+	${OBJECTDIR}/CatP.o \
+	${OBJECTDIR}/Fact.o \
 	${OBJECTDIR}/avl.o \
 	${OBJECTDIR}/main.o
 
@@ -68,6 +70,16 @@ ${OBJECTDIR}/CatC.o: CatC.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/CatC.o CatC.c
+
+${OBJECTDIR}/CatP.o: CatP.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/CatP.o CatP.c
+
+${OBJECTDIR}/Fact.o: Fact.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Fact.o Fact.c
 
 ${OBJECTDIR}/avl.o: avl.c 
 	${MKDIR} -p ${OBJECTDIR}

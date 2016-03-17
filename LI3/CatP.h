@@ -1,14 +1,7 @@
 #include "avl.h"
 
-typedef struct avl_table TProdutos;
+typedef struct CProdutos* Produtos;
 
-typedef struct LProdutos {
-    char* cod;
-    struct LProdutos *next;
-} LProdutos;
+Produtos criar_produtos();
 
-typedef struct Produtos {
-    TProdutos *tree;
-    LProdutos *lista;
-} Produtos;
-
+void *insert_produtos(Produtos produtos, char* st);

@@ -4,19 +4,17 @@
 #include <stdlib.h>
 #define BUFSIZE 8192
 
-int
-compare_ints (const void *pa, const void *pb, void *param)
-{
-  const int *a = pa;
-  const int *b = pb;
+typedef struct avl_table TClientes;
 
-  if (*a < *b)
-    return -1;
-  else if (*a > *b)
-    return +1;
-  else
-    return 0;
-}
+typedef struct LClientes{
+    char* cod;
+    struct LClientes *next;    
+}LClientes;
+
+typedef struct CClientes{
+    TClientes *tree;
+    LClientes *lista;
+}CClientes;
 
 int compare_strings (const void *pa, const void *pb){
     const char **a = pa;
@@ -25,49 +23,48 @@ int compare_strings (const void *pa, const void *pb){
     return strcmp(*a, *b);
 }
 
-print_tree_structure (const struct avl_node *node, int level)
-{
-  /* You can set the maximum level as high as you like.
-     Most of the time, you'll want to debug code using small trees,
-     so that a large |level| indicates a ``loop'', which is a bug. */
-  if (level > 16)
-    {
-      printf ("[...]");
-      return;
+
+print_tree_structure(const struct avl_node *node, int level) {
+    /* You can set the maximum level as high as you like.
+       Most of the time, you'll want to debug code using small trees,
+       so that a large |level| indicates a ``loop'', which is a bug. */
+    if (level > 16) {
+        printf("[...]");
+        return;
     }
 
-  if (node == NULL)
-    return;
+    if (node == NULL)
+        return;
 
-  printf ("%s", *(int *) node->avl_data);
-  if (node->avl_link[0] != NULL || node->avl_link[1] != NULL)
-    {
-      putchar ('(');
+    printf("%s", *(int *) node->avl_data);
+    if (node->avl_link[0] != NULL || node->avl_link[1] != NULL) {
+        putchar('(');
 
-      print_tree_structure (node->avl_link[0], level + 1);
-      if (node->avl_link[1] != NULL)
-        {
-          putchar (',');
-          print_tree_structure (node->avl_link[1], level + 1);
+        print_tree_structure(node->avl_link[0], level + 1);
+        if (node->avl_link[1] != NULL) {
+            putchar(',');
+            print_tree_structure(node->avl_link[1], level + 1);
         }
 
-      putchar (')');
+        putchar(')');
     }
 }
 
-
-void
-print_whole_tree (const struct avl_table *tree, const char *title)
-{
-  printf ("%s: ", title);
-  print_tree_structure (tree->avl_root, 0);
-  putchar ('\n');
+void print_whole_tree(const struct avl_table *tree, const char *title) {
+    printf("%s: ", title);
+    print_tree_structure(tree->avl_root, 0);
+    putchar('\n');
 }
 
-Clientes *criar_clientes(){
+void *print(Clientes clientes){
+    print_whole_tree(clientes->tree, "Cenas");
+}
+
+
+Clientes criar_clientes(){
     TClientes *tree;   
     LClientes *list;    
-    Clientes *clientes;
+    Clientes clientes;
     
     tree = avl_create (compare_strings, NULL, NULL);
     list = (LClientes*) malloc(sizeof(LClientes));
@@ -80,7 +77,7 @@ Clientes *criar_clientes(){
     return clientes;
 }
 
-void *insert_clientes (Clientes *clientes, char* st){
+void *insert_clientes (Clientes clientes, char* st){
     LClientes *cliente = (LClientes*) malloc(sizeof(clientes->lista));
     cliente->cod =(char*) malloc(sizeof(st));    
     
