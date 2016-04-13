@@ -1,3 +1,3 @@
 #include "avl.h"
 
-typedef struct AFact* Fact;
+typedef struct EFact* Fact;

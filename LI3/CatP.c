@@ -1,4 +1,3 @@
-#include "avl.h"
 #include "CatP.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,7 +39,7 @@ Produtos criar_produtos() {
     return produtos;
 }
 
-void *insert_produtos(Produtos produtos, char* st) {
+Produtos insert_produtos(Produtos produtos, char* st) {
 
     LProdutos *produto = (LProdutos*) malloc(sizeof (produtos->lista));
     produto->cod = (char*) malloc(sizeof (st));
@@ -55,5 +54,5 @@ void *insert_produtos(Produtos produtos, char* st) {
 
 
 
-    return NULL;
+    return produtos;
 }

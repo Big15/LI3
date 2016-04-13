@@ -1,5 +1,5 @@
-build/Release/GNU-Linux/CatC.o: CatC.c avl.h CatC.h
-
-avl.h:
+build/Release/GNU-Linux/CatC.o: CatC.c CatC.h avl.h
 
 CatC.h:
+
+avl.h:

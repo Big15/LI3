@@ -15,7 +15,7 @@ void *ler_clientes(Clientes CC, char *filename) {
     if (f != NULL) {
         while (fgets(s, X, f)) {
             cod = strtok(s, "\r\n");
-            insert_clientes(CC, cod);
+            CC = insert_clientes(CC, cod);
             cod = (char*) malloc(10);
             lidos++;
         }
@@ -25,7 +25,7 @@ void *ler_clientes(Clientes CC, char *filename) {
     return NULL;
 }
 
-void *ler_produtos(Produtos CP, char * filename) {
+void *ler_produtos(Produtos CP, Fact fact, char * filename) {
     int X = 10, i = 0, flag = 0, lidos = 0;
     char s[10];
     char* cod;
@@ -33,7 +33,8 @@ void *ler_produtos(Produtos CP, char * filename) {
     if (f != NULL) {
         while (fgets(s, X, f)) {
             cod = strtok(s, "\r\n");
-            insert_produtos(CP, cod);
+            CP = insert_produtos(CP, cod);
+            fact = insert_produtosF(fact,cod);
             cod = (char*) malloc(10);
             lidos++;
         }
@@ -43,7 +44,7 @@ void *ler_produtos(Produtos CP, char * filename) {
     return NULL;
 }
 
-/*int ler_vendas(char * filename) {
+int ler_vendas(char * filename) {
     int X = 100, i = 0, lidos = 0, unidades = 0, mes = 0, filial =0;	//Necessário verificar se codigo de Prod e de Cliente
     float valor;
     char s[100];
@@ -82,23 +83,28 @@ void *ler_produtos(Produtos CP, char * filename) {
     }
     printf("Vendas registadas: %d\n", lidos);
     return 1;
-}*/
+}
 
 
 int main() {
     Clientes CClientes;
     Produtos CProdutos;
+    LstClientes ListClientes;
     Fact fact;
 
     CClientes = criar_clientes();
     CProdutos = criar_produtos();
     fact = criar_fact();
 
-    ler_clientes(CClientes, "Clientes.txt");
-    ler_produtos(CProdutos, "Produtos.txt");
+    ler_clientes(CClientes,  "Clientes.txt");
+    ler_produtos(CProdutos, fact, "Produtos.txt");
+    
+    ListClientes = cria_lclientes(CClientes);
+    //print_clientes(ListClientes);
     //ler_vendas("Vendas_1M.txt");                  
 
-    print(CClientes);
+    //print(fact);
+    //print(fact);
     //print_whole_tree(CClientes->tree, "Cenas");
     
     // printf("%s\n", CClientes->lista->cod);

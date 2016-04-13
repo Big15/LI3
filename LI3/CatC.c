@@ -1,8 +1,8 @@
-#include "avl.h"
 #include "CatC.h"
 #include <stdio.h>
 #include <stdlib.h>
 #define BUFSIZE 8192
+#define MAX_CLIENTES 20000
 
 typedef struct avl_table TClientes;
 
@@ -16,6 +16,12 @@ typedef struct CClientes{
     LClientes *lista;
 }CClientes;
 
+typedef struct ListClientes{
+    char* cliente[MAX_CLIENTES];
+};
+
+typedef char* Cliente;
+
 int compare_strings (const void *pa, const void *pb){
     const char **a = pa;
     const char **b = pb;
@@ -23,11 +29,11 @@ int compare_strings (const void *pa, const void *pb){
     return strcmp(*a, *b);
 }
 
-
+/*
 print_tree_structure(const struct avl_node *node, int level) {
     /* You can set the maximum level as high as you like.
        Most of the time, you'll want to debug code using small trees,
-       so that a large |level| indicates a ``loop'', which is a bug. */
+       so that a large |level| indicates a ``loop'', which is a bug. 
     if (level > 16) {
         printf("[...]");
         return;
@@ -49,7 +55,7 @@ print_tree_structure(const struct avl_node *node, int level) {
         putchar(')');
     }
 }
-
+/*
 void print_whole_tree(const struct avl_table *tree, const char *title) {
     printf("%s: ", title);
     print_tree_structure(tree->avl_root, 0);
@@ -59,7 +65,55 @@ void print_whole_tree(const struct avl_table *tree, const char *title) {
 void *print(Clientes clientes){
     print_whole_tree(clientes->tree, "Cenas");
 }
+*/
 
+LstClientes travessia_tree_structure(const struct avl_node *node, int n, LstClientes clientes) { 
+   
+    if (node->avl_link[0] != NULL){
+        n = travessia_tree_structure(node->avl_link[0], n, clientes);
+        clientes->cliente[n] = strdup( *(int*) node->avl_data);
+        if(n < 10)  printf("%s - %d\n", clientes->cliente[n], n);
+        n++;
+        if(node->avl_link[1] != NULL){
+            n = travessia_tree_structure(node->avl_link[1], n, clientes);
+            clientes->cliente[n] = strdup( *(int*) node->avl_data);
+            if(n < 10)  printf("%s - %d\n", clientes->cliente[n], n);
+            n++;
+        }
+    }
+    
+    
+    return clientes;
+        
+        /*
+        || node->avl_link[1] != NULL) {
+
+        n = travessia_tree_structure(node->avl_link[0], n, clientes);        
+        //if(n<100)    printf("%d - %s - %s\n", n, *(int*) node->avl_data, clientes->cliente[n]);
+        //n++;
+        if (node->avl_link[1] != NULL) {
+            n = travessia_tree_structure(node->avl_link[1], n, clientes);
+        }
+        clientes->cliente[n] = strdup( *(int*) node->avl_data);
+        n++;
+        return n;
+    }
+    return n;*/
+}
+
+print_clientes(LstClientes l){
+    int i;
+    for(i = 0; i < 10; i++)
+        printf("%s\n", l->cliente[i]);
+}
+
+LstClientes cria_lclientes(Clientes clientes){
+    LstClientes novo = (LstClientes*) malloc(sizeof(LstClientes));
+    int n;
+    novo = travessia_tree_structure(clientes->tree->avl_root, 0, novo);
+    printf("%d - %s\n", n, novo->cliente[0]);
+    return novo;
+}
 
 Clientes criar_clientes(){
     TClientes *tree;   
@@ -77,7 +131,7 @@ Clientes criar_clientes(){
     return clientes;
 }
 
-void *insert_clientes (Clientes clientes, char* st){
+Clientes insert_clientes (Clientes clientes, char* st){
     LClientes *cliente = (LClientes*) malloc(sizeof(clientes->lista));
     cliente->cod =(char*) malloc(sizeof(st));    
     
@@ -88,7 +142,7 @@ void *insert_clientes (Clientes clientes, char* st){
     avl_insert(clientes->tree, &cliente->cod); 
             
     
-    return NULL;
+    return clientes;
 }
 
 /*int main(void) {
