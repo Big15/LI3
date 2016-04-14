@@ -85,6 +85,20 @@ int ler_vendas(char * filename) {
     return 1;
 }
 
+void travessia(LstClientes list){
+    int n = 1, i = 0, p = 0, max;    
+    max = get_n_l(list);
+    while(n!=0){
+        printf("Clientes:\n");
+        for(i = p; i <= p+19 && i < max; i++){
+            printf("%d - %s\n", i+1, get_cliente_l(list, i));
+        }
+        printf("[1]-Pagina Anterior\n[2]-Próxima Pagina\n[0]-Sair\n");                
+        scanf("%d", &n);
+        if(n == 1 && p > 19) p-=20;
+        else if(n == 2) p+=20;
+    }
+}
 
 int main() {
     Clientes CClientes;
@@ -100,6 +114,9 @@ int main() {
     ler_produtos(CProdutos, fact, "Produtos.txt");
     
     ListClientes = cria_lclientes(CClientes);
+    int x = get_n_l(ListClientes);
+    printf("%d\n", x);
+    travessia(ListClientes);
     //print_clientes(ListClientes);
     //ler_vendas("Vendas_1M.txt");                  
 

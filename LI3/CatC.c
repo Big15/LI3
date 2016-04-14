@@ -18,6 +18,7 @@ typedef struct CClientes{
 
 typedef struct ListClientes{
     char* cliente[MAX_CLIENTES];
+    int nclientes;
 };
 
 typedef char* Cliente;
@@ -67,51 +68,38 @@ void *print(Clientes clientes){
 }
 */
 
-LstClientes travessia_tree_structure(const struct avl_node *node, int n, LstClientes clientes) { 
-   
+int travessia_tree_structure(const struct avl_node *node, int n, LstClientes* clientes) {    
+    
     if (node->avl_link[0] != NULL){
         n = travessia_tree_structure(node->avl_link[0], n, clientes);
-        clientes->cliente[n] = strdup( *(int*) node->avl_data);
-        if(n < 10)  printf("%s - %d\n", clientes->cliente[n], n);
-        n++;
-        if(node->avl_link[1] != NULL){
-            n = travessia_tree_structure(node->avl_link[1], n, clientes);
-            clientes->cliente[n] = strdup( *(int*) node->avl_data);
-            if(n < 10)  printf("%s - %d\n", clientes->cliente[n], n);
-            n++;
-        }
     }
-    
-    
-    return clientes;
-        
-        /*
-        || node->avl_link[1] != NULL) {
-
-        n = travessia_tree_structure(node->avl_link[0], n, clientes);        
-        //if(n<100)    printf("%d - %s - %s\n", n, *(int*) node->avl_data, clientes->cliente[n]);
-        //n++;
-        if (node->avl_link[1] != NULL) {
-            n = travessia_tree_structure(node->avl_link[1], n, clientes);
-        }
-        clientes->cliente[n] = strdup( *(int*) node->avl_data);
+        (*clientes)->cliente[n] = strdup( *(int*) node->avl_data);
+        //if(n < 20)  printf("%s - %d\n", (*clientes)->cliente[n], n);
         n++;
-        return n;
-    }
-    return n;*/
+    if(node->avl_link[1] != NULL){
+        n = travessia_tree_structure(node->avl_link[1], n, clientes);
+    }    
+    
+    return n;
 }
 
-print_clientes(LstClientes l){
-    int i;
-    for(i = 0; i < 10; i++)
-        printf("%s\n", l->cliente[i]);
+char* get_cliente_l(LstClientes l, int n){
+    return l->cliente[n];
 }
+
+int get_n_l(LstClientes l){
+    int n = l->nclientes ;
+    return n;
+}
+
+
 
 LstClientes cria_lclientes(Clientes clientes){
-    LstClientes novo = (LstClientes*) malloc(sizeof(LstClientes));
+    LstClientes novo = (LstClientes*) malloc(sizeof(LstClientes) * MAX_CLIENTES);
     int n;
-    novo = travessia_tree_structure(clientes->tree->avl_root, 0, novo);
-    printf("%d - %s\n", n, novo->cliente[0]);
+    n = travessia_tree_structure(clientes->tree->avl_root, 0, &novo);
+    novo->nclientes = n;
+    
     return novo;
 }
 
