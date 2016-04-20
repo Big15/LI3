@@ -21,8 +21,6 @@ typedef struct ListClientes{
     int nclientes;
 };
 
-typedef char* Cliente;
-
 int compare_strings (const void *pa, const void *pb){
     const char **a = pa;
     const char **b = pb;
@@ -83,15 +81,6 @@ int travessia_tree_structure(const struct avl_node *node, int n, LstClientes* cl
     return n;
 }
 
-char* get_cliente_l(LstClientes l, int n){
-    return l->cliente[n];
-}
-
-int get_n_l(LstClientes l){
-    int n = l->nclientes ;
-    return n;
-}
-
 
 
 LstClientes cria_lclientes(Clientes clientes){
@@ -101,6 +90,19 @@ LstClientes cria_lclientes(Clientes clientes){
     novo->nclientes = n;
     
     return novo;
+}
+
+int check_cliente(Clientes cli, char* cod){
+    int n;
+    LClientes *novo = (LClientes*) malloc(sizeof (LClientes));
+    novo->cod = strdup(cod);
+    novo = avl_find(cli->tree, novo);
+    
+    if(novo == NULL)
+        n = 1;
+    else
+        n = 0;
+    return n;
 }
 
 Clientes criar_clientes(){

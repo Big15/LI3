@@ -7,7 +7,7 @@
 #include "CatP.h"
 #include "Fact.h"
 
-void *ler_clientes(Clientes CC, char *filename) {
+void *ler_clientes(Clientes cC, char *filename) {
     int X = 10, i = 0, flag = 0, lidos = 0;
     char s[10];
     char* cod;
@@ -15,7 +15,7 @@ void *ler_clientes(Clientes CC, char *filename) {
     if (f != NULL) {
         while (fgets(s, X, f)) {
             cod = strtok(s, "\r\n");
-            CC = insert_clientes(CC, cod);
+            cC = insert_clientes(cC, cod);
             cod = (char*) malloc(10);
             lidos++;
         }
@@ -25,7 +25,7 @@ void *ler_clientes(Clientes CC, char *filename) {
     return NULL;
 }
 
-void *ler_produtos(Produtos CP, Fact fact, char * filename) {
+void *ler_produtos(Produtos cP, Fact fact, char * filename) {
     int X = 10, i = 0, flag = 0, lidos = 0;
     char s[10];
     char* cod;
@@ -33,7 +33,7 @@ void *ler_produtos(Produtos CP, Fact fact, char * filename) {
     if (f != NULL) {
         while (fgets(s, X, f)) {
             cod = strtok(s, "\r\n");
-            CP = insert_produtos(CP, cod);
+            cP = insert_produtos(cP, cod);
             fact = insert_produtosF(fact,cod);
             cod = (char*) malloc(10);
             lidos++;
@@ -44,8 +44,9 @@ void *ler_produtos(Produtos CP, Fact fact, char * filename) {
     return NULL;
 }
 
-int ler_vendas(char * filename) {
+int ler_vendas(Fact fact, Clientes cC, Produtos cP, char * filename) {
     int X = 100, i = 0, lidos = 0, unidades = 0, mes = 0, filial =0;	//Necessário verificar se codigo de Prod e de Cliente
+    int cfalha = 0, pfalha = 0, certos = 0, falhas = 0;
     float valor;
     char s[100];
     char codProd[10];
@@ -77,22 +78,32 @@ int ler_vendas(char * filename) {
                 i++;
                 linha = strtok(NULL, " ");
             }
-            
+            cfalha += check_cliente(cC, codCliente);
+            pfalha += check_produto(cP, codProd);
+            if(!check_produto(cP, codProd) && !check_cliente(cC, codCliente)){
+                fact = insert_vendasF(fact, codProd, valor, unidades, promo, mes, filial);
+                certos++;
+            }
+            else
+                falhas++;
             lidos++;
         }
     }
     printf("Vendas registadas: %d\n", lidos);
+    printf("Vendas com codigos de cliente errados: %d\n", cfalha);
+    printf("Vendas validas: %d\n", certos);
+    printf("Invalidas: %d\n", falhas);
     return 1;
 }
 
-void travessia(LstClientes list){
+void travessia(List list){
     int n = 1, i = 0, p = 0, max;    
-    max = get_n_l(list);
-    while(n!=0){
-        printf("Clientes:\n");
+    max = get_np_l(list);
+    while(n!=0){        
         for(i = p; i <= p+19 && i < max; i++){
-            printf("%d - %s\n", i+1, get_cliente_l(list, i));
+            printf("%d - %s\n", i+1, get_string_l(list, i));
         }
+        printf("Total de Resultados: %d\n", max);
         printf("[1]-Pagina Anterior\n[2]-Próxima Pagina\n[0]-Sair\n");                
         scanf("%d", &n);
         if(n == 1 && p > 19) p-=20;
@@ -101,22 +112,35 @@ void travessia(LstClientes list){
 }
 
 int main() {
-    Clientes CClientes;
-    Produtos CProdutos;
-    LstClientes ListClientes;
+    Clientes cClientes;
+    Produtos cProdutos;
+    List list = novo_l();
     Fact fact;
 
-    CClientes = criar_clientes();
-    CProdutos = criar_produtos();
+    cClientes = criar_clientes();
+    cProdutos = criar_produtos();
     fact = criar_fact();
 
-    ler_clientes(CClientes,  "Clientes.txt");
-    ler_produtos(CProdutos, fact, "Produtos.txt");
+    ler_clientes(cClientes,  "Clientes.txt");
+    ler_produtos(cProdutos, fact, "Produtos.txt");
     
+    
+    ler_vendas(fact, cClientes, cProdutos, "Vendas_1M.txt"); 
+    
+    //list = q2(cProdutos, list, 'A');
+    list = q3(fact, list, 7, "NR1091", 0);
+    
+    //teste(fact, "GK1523");
+    
+    //ListProdutos = q2(CProdutos, 'A');
+    travessia(list);
+    /*
     ListClientes = cria_lclientes(CClientes);
     int x = get_n_l(ListClientes);
     printf("%d\n", x);
     travessia(ListClientes);
+      
+     */
     //print_clientes(ListClientes);
     //ler_vendas("Vendas_1M.txt");                  
 

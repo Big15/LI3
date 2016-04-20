@@ -38,6 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/CatC.o \
 	${OBJECTDIR}/CatP.o \
 	${OBJECTDIR}/Fact.o \
+	${OBJECTDIR}/List.o \
 	${OBJECTDIR}/avl.o \
 	${OBJECTDIR}/main.o
 
@@ -80,6 +81,11 @@ ${OBJECTDIR}/Fact.o: Fact.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Fact.o Fact.c
+
+${OBJECTDIR}/List.o: List.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/List.o List.c
 
 ${OBJECTDIR}/avl.o: avl.c 
 	${MKDIR} -p ${OBJECTDIR}

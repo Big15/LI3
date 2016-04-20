@@ -7,6 +7,7 @@
       <itemPath>CatC.h</itemPath>
       <itemPath>CatP.h</itemPath>
       <itemPath>Fact.h</itemPath>
+      <itemPath>List.h</itemPath>
       <itemPath>../../Desktop/Univ/LI3/avl.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
@@ -22,6 +23,7 @@
       <itemPath>CatC.c</itemPath>
       <itemPath>CatP.c</itemPath>
       <itemPath>Fact.c</itemPath>
+      <itemPath>List.c</itemPath>
       <itemPath>avl.c</itemPath>
       <itemPath>main.c</itemPath>
     </logicalFolder>
@@ -76,6 +78,10 @@
       </item>
       <item path="Fact.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="List.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="List.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="avl.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
@@ -129,6 +135,10 @@
       <item path="Fact.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="Fact.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="List.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="List.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="avl.c" ex="false" tool="0" flavor2="0">
       </item>

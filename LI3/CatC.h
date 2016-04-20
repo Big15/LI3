@@ -12,9 +12,7 @@ Clientes insert_clientes (Clientes clientes, char* st);
 
 LstClientes cria_lclientes(Clientes clientes);
 
-int get_n_l(LstClientes l);
-
-char* get_cliente_l(LstClientes l, int n);
+int check_cliente(Clientes cli, char* cod);
 
 
 #endif
