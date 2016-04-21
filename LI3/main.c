@@ -7,6 +7,7 @@
 #include "CatP.h"
 #include "Fact.h"
 
+
 void *ler_clientes(Clientes cC, char *filename) {
     int X = 10, i = 0, flag = 0, lidos = 0;
     char s[10];
@@ -115,7 +116,7 @@ int main() {
     Clientes cClientes;
     Produtos cProdutos;
     List list = novo_l();
-    Fact fact;
+    Fact fact;/*
 
     cClientes = criar_clientes();
     cProdutos = criar_produtos();
@@ -142,7 +143,7 @@ int main() {
       
      */
     //print_clientes(ListClientes);
-    //ler_vendas("Vendas_1M.txt");                  
+                   
 
     //print(fact);
     //print(fact);
@@ -153,6 +154,64 @@ int main() {
     // print_whole_tree(CProdutos->tree, "Cenas");
     // printf("%s\n", CProdutos->lista->cod);
     // printf("AVL Clientes: %d\nAVL Produtos: %d\n",(int) CClientes->tree->avl_count, (int) CProdutos->tree->avl_count);
-    printf("END\n");
+    
+    
+    int n = 100;
+    clock_t clock_start;
+    double segundos;
+    cClientes = criar_clientes();
+    cProdutos = criar_produtos();
+    fact = criar_fact();
+   
+    char*prods[25000];
+    
+    while (n != 0) {
+        int z, w;
+        int* x, y;
+        float* qaux;
+        char *colunas[5];
+        char buff[20];
+        char buff2[10];
+        n = initMenu();
+        switch (n) {
+            case 1:
+                cClientes = criar_clientes();
+                cProdutos = criar_produtos();
+                fact = criar_fact();
+                z = getlinha("Ficheiro clientes (default: Clientes.txt):", buff, sizeof (buff));     
+                clock_start=clock();
+                if(!strcmp(buff, "\0"))
+                    ler_clientes(cClientes, "Clientes.txt");
+                else
+                    ler_clientes(cClientes, buff);
+                segundos = (double)(clock()- clock_start)/CLOCKS_PER_SEC;
+                printf("Tempo: %.2f\n", segundos);
+                
+                z = getlinha("Ficheiro produtos (default: Produtos.txt):", buff, sizeof (buff));
+                
+                clock_start=clock();
+                if(!strcmp(buff, "\0"))
+                    ler_produtos(cProdutos, fact, "Produtos.txt");
+                else
+                    ler_produtos(cProdutos, fact, buff);
+                segundos = (double)(clock()- clock_start)/CLOCKS_PER_SEC;
+                printf("Tempo: %.2f\n", segundos);
+                
+                z = getlinha("Ficheiro Vendas (default: Vendas_1M.txt):", buff, sizeof (buff));
+                clock_start=clock();
+                if(!strcmp(buff, "\0"))
+                    ler_vendas(fact, cClientes, cProdutos, "Vendas_1M.txt");
+                else
+                    ler_vendas(fact, cClientes, cProdutos, buff);
+                segundos = (double)(clock()- clock_start)/CLOCKS_PER_SEC;
+                printf("Tempo: %.2f\n", segundos);
+                
+                break;
+                }
+    }    
+  
+    return (EXIT_SUCCESS);
+
+    //printf("END\n");
     return 0;
 }
