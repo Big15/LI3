@@ -20,9 +20,9 @@ typedef struct LFact {
     int vt1;
     int vt2;
     int vt3;
-    InfFact filial1[12];
-    InfFact filial2[12];
-    InfFact filial3[12];
+    InfFact filial1[13];
+    InfFact filial2[13];
+    InfFact filial3[13];
     struct LFact *next;
 } LFact;
 
@@ -30,11 +30,6 @@ typedef struct EFact {
     TFact *tree;
     LFact *lista;
 } EFact;
-
-typedef struct ListFact{
-    char* fact[MAX_FACT];
-    int n;
-};
 
 int compare_strings3(const void *pa, const void *pb) {
     const LFact *a = pa;
@@ -92,22 +87,52 @@ List q3(Fact fact, List list, int mes, char* cod, int tipo){
     if(novo != NULL){
         switch(tipo){
             case 0:
-                sprintf(res, "Unidades ->  N:%d P:%d\n", ((novo->filial1[mes].N)+(novo->filial2[mes].N)+(novo->filial3[mes].N)), ((novo->filial1[mes].P)+(novo->filial2[mes].P)+(novo->filial3[mes].P)));                
+                sprintf(res, "N:%d", ((novo->filial1[mes].N)+(novo->filial2[mes].N)+(novo->filial3[mes].N)));
                 list = add_string_l(list, res);
-                sprintf(res, "Facturacao-> N:%.3f P:%.3f T:%.3f\n", ((novo->filial1[mes].fN)+(novo->filial2[mes].fN)+(novo->filial3[mes].fN)), ((novo->filial1[mes].fP)+(novo->filial2[mes].fP)+(novo->filial3[mes].fP)), ((novo->filial1[mes].total)+(novo->filial2[mes].total)+(novo->filial3[mes].total)));
+                sprintf(res, "P:%d", ((novo->filial1[mes].P)+(novo->filial2[mes].P)+(novo->filial3[mes].P)));               
+                list = add_string_l(list, res);
+                sprintf(res, "fN:%.3f", ((novo->filial1[mes].fN)+(novo->filial2[mes].fN)+(novo->filial3[mes].fN)));
+                list = add_string_l(list, res);
+                sprintf(res, "fP:%.3f", ((novo->filial1[mes].fP)+(novo->filial2[mes].fP)+(novo->filial3[mes].fP)));
+                list = add_string_l(list, res);
+                sprintf(res, "fT:%.3f", ((novo->filial1[mes].total)+(novo->filial2[mes].total)+(novo->filial3[mes].total)));
                 list = add_string_l(list, res);
                 
             break;
             case 1:
-                sprintf(res, "%d    %d\n", (novo->filial1[mes].N), (novo->filial1[mes].P));                
+                sprintf(res, "N:%d", (novo->filial1[mes].N));
+                list = add_string_l(list, res);
+                sprintf(res, "P:%d", (novo->filial1[mes].P));               
+                list = add_string_l(list, res);
+                sprintf(res, "fN:%.3f", (novo->filial1[mes].fN));
+                list = add_string_l(list, res);
+                sprintf(res, "fP:%.3f", (novo->filial1[mes].fP));
+                list = add_string_l(list, res);
+                sprintf(res, "fT:%.3f", (novo->filial1[mes].total));
                 list = add_string_l(list, res);
             break;
             case 2:
-                sprintf(res, "%d    %d\n", (novo->filial2[mes].N), (novo->filial2[mes].P));                
+                sprintf(res, "N:%d", (novo->filial2[mes].N));
+                list = add_string_l(list, res);
+                sprintf(res, "P:%d", (novo->filial2[mes].P));               
+                list = add_string_l(list, res);
+                sprintf(res, "fN:%.3f", (novo->filial2[mes].fN));
+                list = add_string_l(list, res);
+                sprintf(res, "fP:%.3f", (novo->filial2[mes].fP));
+                list = add_string_l(list, res);
+                sprintf(res, "fT:%.3f", (novo->filial2[mes].total));
                 list = add_string_l(list, res);
             break;
             case 3:
-                sprintf(res, "%d    %d\n", (novo->filial3[mes].N), (novo->filial3[mes].P));                
+                sprintf(res, "N:%d", (novo->filial3[mes].N));
+                list = add_string_l(list, res);
+                sprintf(res, "P:%d", (novo->filial3[mes].P));               
+                list = add_string_l(list, res);
+                sprintf(res, "fN:%.3f", (novo->filial3[mes].fN));
+                list = add_string_l(list, res);
+                sprintf(res, "fP:%.3f", (novo->filial3[mes].fP));
+                list = add_string_l(list, res);
+                sprintf(res, "fT:%.3f", (novo->filial3[mes].total));
                 list = add_string_l(list, res);
             break;                
         }
@@ -118,12 +143,98 @@ List q3(Fact fact, List list, int mes, char* cod, int tipo){
 List q4(Fact fact, List list, int tipo){
     int n;
     n = travessia_tree_q4(fact->tree->avl_root, 0, list, tipo);
-
+    
     
     return list;
 }
 
-InfFact novo_filial() {
+int travessia_tree_q12(const struct avl_node *node, int n) {    
+    LFact *old = node->avl_data;
+    if (node->avl_link[0] != NULL) {
+        n = travessia_tree_q12(node->avl_link[0], n);
+    }
+
+    if (old->vt1 == 0 && old->vt2 == 0 && old->vt3 == 0) {
+        n++;
+    }
+
+    if (node->avl_link[1] != NULL){
+        n = travessia_tree_q12(node->avl_link[1], n);
+    }    
+    
+    return n;
+}
+
+List q12_fact(Fact fact, List list){
+    int n;
+    char* res = (char*) malloc (sizeof(char*)*30);
+    n = travessia_tree_q12(fact->tree->avl_root, 0);
+    sprintf(res, "Produtos nunca foram comprados: %d", n);
+    list = add_string_l(list, res);    
+    
+    return list;
+}
+
+int travessia_tree_q6_uni(const struct avl_node *node, int mes1, int mes2) {
+    int n = 0, i;
+    LFact *old = node->avl_data;
+    if (node->avl_link[0] != NULL){
+        n += travessia_tree_q6_uni(node->avl_link[0], mes1, mes2);
+    }
+    
+    for(i = mes1; i <= mes2; i++){
+        n += old->filial1[i].uni;
+        n += old->filial2[i].uni;
+        n += old->filial3[i].uni;
+    }
+    
+    if(node->avl_link[1] != NULL){
+        n += travessia_tree_q6_uni(node->avl_link[1], mes1, mes2);
+    }    
+    
+    return n;
+}
+
+float travessia_tree_q6_fact(const struct avl_node *node, int mes1, int mes2) {
+    int i;
+    float n = 0;
+    LFact *old = node->avl_data;
+    if (node->avl_link[0] != NULL){
+        n += travessia_tree_q6_fact(node->avl_link[0], mes1, mes2);
+    }
+    
+    for(i = mes1; i <= mes2; i++){
+        n += old->filial1[i].total;
+        n += old->filial2[i].total;
+        n += old->filial3[i].total;
+    }    
+    
+    if(node->avl_link[1] != NULL){
+        n += travessia_tree_q6_fact(node->avl_link[1], mes1, mes2);
+    }    
+    
+    return n;
+}
+
+List q6(Fact fact, List list, int mes1, int mes2){
+    int uni = 0;
+    float fp = 0;    
+    char* res = (char*) malloc(sizeof(char*)*50);
+    
+    uni = travessia_tree_q6_uni(fact->tree->avl_root, mes1, mes2);
+    
+    fp = travessia_tree_q6_fact(fact->tree->avl_root, mes1, mes2);
+    
+    sprintf(res, "FACTURADO TOTAL = %.0f", fp);
+    list = add_string_l(list, res);
+    sprintf(res, "UNIDADES VENDIDAS = %d", uni);
+    list = add_string_l(list, res);
+    
+    return list;
+    
+}
+
+InfFact novo_filial_fact() {
     InfFact novo;
     novo.N = 0;
     novo.P = 0;
@@ -147,43 +258,43 @@ Fact insert_vendasF(Fact fact, char* prod, float valor, int uni, char* promo, in
     if (old != NULL)
         switch (filial) {
             case 1:
-                if (promo == 'N') {
+                if (!strcmp(promo, "N")) {
                     old->filial1[mes].N += uni;
-                    old->filial1[mes].fN += valor;
-                    old->filial1[mes].total += valor;
+                    old->filial1[mes].fN += (valor*uni);
+                    old->filial1[mes].total += (valor*uni);
                     old->filial1[mes].uni += uni;
                 } else {
                     old->filial1[mes].P += uni;
-                    old->filial1[mes].fP += valor;
-                    old->filial1[mes].total += valor;
+                    old->filial1[mes].fP += (valor*uni);
+                    old->filial1[mes].total += (valor*uni);
                     old->filial1[mes].uni += uni;
                 }
                 old->vt1 += uni;
                 break;
             case 2:
-                if (promo == 'N') {
+                if (!strcmp(promo, "N")) {
                     old->filial2[mes].N += uni;
-                    old->filial2[mes].fN += valor;
-                    old->filial2[mes].total += valor;
+                    old->filial2[mes].fN += (valor*uni);
+                    old->filial2[mes].total += (valor*uni);
                     old->filial2[mes].uni += uni;
                 } else {
                     old->filial2[mes].P += uni;
-                    old->filial2[mes].fP += valor;
-                    old->filial2[mes].total += valor;
+                    old->filial2[mes].fP += (valor*uni);
+                    old->filial2[mes].total += (valor*uni);
                     old->filial2[mes].uni += uni;
                 }
                 old->vt2 += uni;
                 break;
             case 3:
-                if (promo == 'N') {
+                if (!strcmp(promo, "N")) {
                     old->filial3[mes].N += uni;
-                    old->filial3[mes].fN += valor;
-                    old->filial3[mes].total += valor;
+                    old->filial3[mes].fN += (valor*uni);
+                    old->filial3[mes].total += (valor*uni);
                     old->filial3[mes].uni += uni;
                 } else {
                     old->filial3[mes].P += uni;
-                    old->filial3[mes].fP += valor;
-                    old->filial3[mes].total += valor;
+                    old->filial3[mes].fP += (valor*uni);
+                    old->filial3[mes].total += (valor*uni);
                     old->filial3[mes].uni += uni;
                 }
                 old->vt3 += uni;
@@ -204,9 +315,9 @@ Fact insert_produtosF(Fact fact, char* prod) {
 
     strcpy(novo->cod, prod);
     for(i = 0; i<= 12; i++){
-        novo->filial1[i] = novo_filial();
-        novo->filial2[i] = novo_filial();
-        novo->filial3[i] = novo_filial();
+        novo->filial1[i] = novo_filial_fact();
+        novo->filial2[i] = novo_filial_fact();
+        novo->filial3[i] = novo_filial_fact();
     }
     novo->vt1 = 0;
     novo->vt2 = 0;

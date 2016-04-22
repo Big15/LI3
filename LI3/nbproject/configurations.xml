@@ -7,6 +7,7 @@
       <itemPath>CatC.h</itemPath>
       <itemPath>CatP.h</itemPath>
       <itemPath>Fact.h</itemPath>
+      <itemPath>Filial.h</itemPath>
       <itemPath>List.h</itemPath>
       <itemPath>../../Desktop/Univ/LI3/avl.h</itemPath>
     </logicalFolder>
@@ -16,6 +17,8 @@
       <itemPath>../../Desktop/Univ/LI3/Clientes.txt</itemPath>
       <itemPath>../../Desktop/Univ/LI3/Produtos.txt</itemPath>
       <itemPath>../../Desktop/Univ/LI3/Vendas_1M.txt</itemPath>
+      <itemPath>Vendas_3M.txt</itemPath>
+      <itemPath>dist/Release/GNU-Linux/Vendas_5M.txt</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -23,6 +26,7 @@
       <itemPath>CatC.c</itemPath>
       <itemPath>CatP.c</itemPath>
       <itemPath>Fact.c</itemPath>
+      <itemPath>Filial.c</itemPath>
       <itemPath>List.c</itemPath>
       <itemPath>avl.c</itemPath>
       <itemPath>main.c</itemPath>
@@ -78,11 +82,22 @@
       </item>
       <item path="Fact.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="Filial.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="Filial.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="List.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="List.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="Vendas_3M.txt" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="avl.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="dist/Release/GNU-Linux/Vendas_5M.txt"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
@@ -136,11 +151,22 @@
       </item>
       <item path="Fact.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="Filial.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="Filial.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="List.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="List.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="Vendas_3M.txt" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="avl.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="dist/Release/GNU-Linux/Vendas_5M.txt"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>

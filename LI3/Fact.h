@@ -3,8 +3,6 @@
 
 typedef struct EFact* Fact;
 
-typedef struct ListFact* LstFact;
-
 Fact criar_fact();
 
 Fact insert_produtosF(Fact fact,char* prod);
