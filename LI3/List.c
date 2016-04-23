@@ -1,7 +1,5 @@
 #include "List.h"
 
-#define MAX 1000000
-
 typedef struct lst{
     char** string;
     int n;
@@ -18,7 +16,6 @@ int get_np_l(List l){
 
 List concat_string_l(List l, char* s, int i){
     int n = l->n;
-    //malloc(auxlista->size x sizeof (char*))
     strcat(l->string[i], s);
 
     return l;
@@ -26,7 +23,6 @@ List concat_string_l(List l, char* s, int i){
 
 List add_string_l(List l, char* s){
     int n = l->n;
-    //malloc(auxlista->size x sizeof (char*))
     l->string = (char**) realloc(l->string, (n+1) * sizeof(char*));
     l->string[n] = strdup(s);
     l->n++;

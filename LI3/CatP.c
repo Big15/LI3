@@ -31,7 +31,6 @@ int travessia_treep_structure(const struct avl_node *node, int n, List* produtos
         n = travessia_treep_structure(node->avl_link[0], n, produtos);
     }    
         produtos = add_string_l(produtos, *(int*) node->avl_data);
-        //if(n < 20)  printf("%s - %d\n", (*clientes)->cliente[n], n);
         n++;
     if(node->avl_link[1] != NULL){
         n = travessia_treep_structure(node->avl_link[1], n, produtos);

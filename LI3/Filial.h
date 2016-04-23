@@ -12,5 +12,19 @@ Filial insert_vendas_Filial(Filial fil, char* prod, float valor, int uni, char* 
 
 Filial criar_filial();
 
+List q5(Filial fil, List list, char* cod);
+
+List q7(Filial fil, List list);
+
+List q8(Filial fil, List list, char* prod, int filial);
+
+List q9(Filial fil, List list, char* cli, int mes);
+
+List q10_fili(Filial fil, List l, int t);
+
+List q11(Filial fil, List list, char* cli);
+
+List q12_fili(Filial fil, List list, int t);
+
 #endif /* FILIAL_H */
 

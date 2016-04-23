@@ -56,19 +56,6 @@ int compare_strings4(const void *pa, const void *pb) {
     return strcmp(a->cod, b->cod);
 }
 
-int compare_unidades(const void *pa, const void *pb) {
-    const LProdF *a = pa;
-
-    const LProdF *b = pb;
-    
-    if(a->total == b->total)
-        return 0;
-    else if(a->total > b->total)
-        return 1;
-    else
-        return -1;    
-}
-
 int travessia_tree_q7(const struct avl_node *node) {
     int i;
     int n = 0;
@@ -136,12 +123,10 @@ int travessia_tree_q8(const struct avl_node *node, char* prod, int filial, List 
         if(n1){
             concat_string_l(list, old->cod, 0);
             concat_string_l(list, " ", 0);
-            //printf("%s ", old->cod);
         }
         if(p){
             concat_string_l(list, old->cod, 1);
             concat_string_l(list, " ", 1);
-            //printf("%s ", old->cod);
         }
         
     }
@@ -528,7 +513,6 @@ Filial insert_vendas_Filial(Filial fil, char* prod, float valor, int uni, char* 
             old->lProdsFil.lista = newL;
             
             avl_insert(old->lProdsFil.tree, newL);
-            //printf("%s\n", newL->cod);
         }
         
     }
