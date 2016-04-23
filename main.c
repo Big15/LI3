@@ -48,7 +48,7 @@ void *ler_produtos(Produtos cP, Fact fact, char * filename) {
 }
 
 int ler_vendas(Fact fact, Filial fil, Clientes cC, Produtos cP, char * filename) {
-    int X = 100, i = 0, lidos = 0, unidades = 0, mes = 0, filial = 0; //Necessário verificar se codigo de Prod e de Cliente
+    int X = 100, i = 0, lidos = 0, unidades = 0, mes = 0, filial = 0; 
     int cfalha = 0, pfalha = 0, certos = 0, falhas = 0;
     float valor;
     char s[100];
@@ -109,14 +109,18 @@ void travessia(List list, float s) {
         printf("Resultados apresentados: %d\n", i);
         printf("Total de Resultados: %d\n", max);
         printf("Tempo: %.2f\n", s);
-        printf("[1]-Pagina Anterior\n[2]-Próxima Pagina\n[0]-Sair\n");
+        if(get_np_l(list)>20)
+        printf("[1]-Pagina Anterior  [2]-Próxima Pagina\n");
+        printf("[0]-Sair\n");
         scanf("%d", &st);
-        if (st == 0)
-            list = clear_l(list);
+        char c = getchar();
+       if (st == 0){
+           free(list);
+           list = novo_l();
+       }
 
 
-
-        else if (st == 1 && p > 19) p -= 20;
+         if (st == 1 && p > 19) p -= 20;
         else if (st == 2) p += 20;
     }
 }
@@ -188,7 +192,7 @@ int main() {
                 break;
 
             case 2:
-                z = getlinha("Insira a letra:\n", buff, sizeof (buff));
+                z = getlinha("Insira a letra(maiúscula):\n", buff, sizeof (buff));
                 clock_start = clock();
                 list = q2(cProdutos, list, buff[0]);
                 segundos = (double) (clock() - clock_start) / CLOCKS_PER_SEC;
@@ -226,9 +230,20 @@ int main() {
                 k = getlinha("[0]- Facturação Global\n[1]- Facturação Filial 1\n[2]- Facturação Filial 2\n[3]- Facturação Filial 3\n", buff, sizeof (buff));
                 w = atoi(buff);
                 clock_start = clock();
-                list = q4(fact, list, w);
-                segundos = (double) (clock() - clock_start) / CLOCKS_PER_SEC;
-                travessia(list, segundos);
+                if (w >= 0 && w <= 3) {
+                    list = q4(fact, list, w);
+                    segundos = (double) (clock() - clock_start) / CLOCKS_PER_SEC;
+                    travessia(list, segundos);
+                } else {
+                    printf("Erro: O valor tem de estar entre 0 e 3\n");
+                    z = getlinha("[0]- Facturação Global\n[1]- Facturação Filial 1\n[2]- Facturação Filial 2\n[3]- Facturação Filial 3\n", buff, sizeof (buff));
+                    w = atoi(buff);
+                    clock_start = clock();
+                    list = q4(fact, list, w);
+                    segundos = (double) (clock() - clock_start) / CLOCKS_PER_SEC;
+                    travessia(list, segundos);
+                }
+                break;
 
                 break;
 
@@ -316,12 +331,16 @@ int main() {
                 travessia(list, segundos);
                 break;
 
+           
             case 0:
                 break;
+                
+            default:
+                n = 100;
 
         }
 
-        n = 100;
+        
     }
 
 

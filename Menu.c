@@ -52,6 +52,3 @@ int initMenu() {
     return atoi(buff);
 
 }
-
-
-
