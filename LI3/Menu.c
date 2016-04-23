@@ -32,7 +32,7 @@ int initMenu() {
     int x;
     char buff[100];
     printf("##################################################################################################################################\n");
-    printf("##                                                      GEREVENDAS                                                              ##\n");         
+    printf("##                                                           GEREVENDAS                                                         ##\n");         
     printf("##################################################################################################################################\n");
     printf("##      [1]  - Ler os ficheiros                                                                                                 ##\n");
     printf("##      [2]  - Determinar a lista e o total de produtos cujo código se inicia por uma dada letra                                ##\n");
