@@ -100,7 +100,7 @@ int ler_vendas(Fact fact, Filial fil, Clientes cC, Produtos cP, char * filename)
 }
 
 void travessia(List list, float s) {
-    int st = 1, i = 0, p = 0, max,m;
+    int st = 1, i = 0, p = 0, max, m;
     max = get_np_l(list);
     while (st != 0) {
         for (i = p; i <= p + 19 && i < max; i++) {
@@ -111,9 +111,12 @@ void travessia(List list, float s) {
         printf("Tempo: %.2f\n", s);
         printf("[1]-Pagina Anterior\n[2]-Próxima Pagina\n[0]-Sair\n");
         scanf("%d", &st);
-        if(st==0)
-           m=initMenu();
-        if (st == 1 && p > 19) p -= 20;
+        if (st == 0)
+            list = clear_l(list);
+
+
+
+        else if (st == 1 && p > 19) p -= 20;
         else if (st == 2) p += 20;
     }
 }
@@ -189,11 +192,11 @@ int main() {
                 clock_start = clock();
                 list = q2(cProdutos, list, buff[0]);
                 segundos = (double) (clock() - clock_start) / CLOCKS_PER_SEC;
-               travessia(list, segundos);
+                travessia(list, segundos);
 
 
                 break;
-
+                list=clear_l(list);
             case 3:
                 z = getlinha("Insira o mês:\n", buff, sizeof (buff));
                 w = atoi(buff);
@@ -218,14 +221,16 @@ int main() {
                 }
                 break;
 
-          case 4:
+            case 4:
                 printf("Qual o tipo de facturação que pretende visualizar?\n");
-                k=getlinha("[0]- Facturação Global\n[1]- Facturação Filial 1\n[2]- Facturação Filial 2\n[3]- Facturação Filial 3\n",buff, sizeof (buff));
+                k = getlinha("[0]- Facturação Global\n[1]- Facturação Filial 1\n[2]- Facturação Filial 2\n[3]- Facturação Filial 3\n", buff, sizeof (buff));
                 w = atoi(buff);
-                clock_start=clock();
-               list=q4(fact,list,w);
+                clock_start = clock();
+                list = q4(fact, list, w);
                 segundos = (double) (clock() - clock_start) / CLOCKS_PER_SEC;
-                    travessia(list, segundos);
+                travessia(list, segundos);
+
+                break;
 
             case 5:
                 z = getlinha("Insira o código de cliente:\n", buff, sizeof (buff));
@@ -234,15 +239,16 @@ int main() {
                 list = q5(filial, list, cli);
                 segundos = (double) (clock() - clock_start) / CLOCKS_PER_SEC;
                 travessia(list, segundos);
+
                 break;
 
             case 6:
                 z = getlinha("Insira o primeiro mês:\n", buff, sizeof (buff));
                 w = atoi(buff);
-                z = getlinha("Insira o segundo mês:\n", buff2, sizeof (buff2));
+                k = getlinha("Insira o segundo mês:\n", buff2, sizeof (buff2));
                 f = atoi(buff2);
                 clock_start = clock();
-                q6(fact, list, w, f);
+                list = q6(fact, list, w, f);
                 segundos = (double) (clock() - clock_start) / CLOCKS_PER_SEC;
                 travessia(list, segundos);
 
@@ -253,6 +259,7 @@ int main() {
                 list = q7(filial, list);
                 segundos = (double) (clock() - clock_start) / CLOCKS_PER_SEC;
                 travessia(list, segundos);
+
                 break;
 
             case 8:
@@ -265,9 +272,8 @@ int main() {
                 segundos = (double) (clock() - clock_start) / CLOCKS_PER_SEC;
                 travessia(list, segundos);
 
-
-
                 break;
+
             case 9:
                 z = getlinha("Insira o código de cliente:\n", buff, sizeof (buff));
                 cli = buff;
@@ -278,8 +284,8 @@ int main() {
                 segundos = (double) (clock() - clock_start) / CLOCKS_PER_SEC;
                 travessia(list, segundos);
 
-
                 break;
+            
             case 10:
 
                 z = getlinha("Insira o número de Produtos que pretende ver:\n", buff, sizeof (buff));
@@ -291,6 +297,7 @@ int main() {
                 travessia(list, segundos);
 
                 break;
+            
             case 11:
                 z = getlinha("Insira o código de cliente:\n", buff, sizeof (buff));
                 cli = buff;
@@ -298,7 +305,6 @@ int main() {
                 list = q11(filial, list, cli);
                 segundos = (double) (clock() - clock_start) / CLOCKS_PER_SEC;
                 travessia(list, segundos);
-
 
                 break;
 
@@ -309,11 +315,15 @@ int main() {
                 segundos = (double) (clock() - clock_start) / CLOCKS_PER_SEC;
                 travessia(list, segundos);
                 break;
+
+            case 0:
+                break;
+
         }
+
+        n = 100;
     }
 
-    return (EXIT_SUCCESS);
 
-    //printf("END\n");
     return 0;
 }
