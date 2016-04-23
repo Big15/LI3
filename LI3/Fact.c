@@ -1,4 +1,5 @@
 #include "Fact.h"
+#include "Codigo.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -16,7 +17,7 @@ typedef struct InfFact {
 } InfFact;
 
 typedef struct LFact {
-    char* cod;
+    Codigo cod;
     int vt1;
     int vt2;
     int vt3;
@@ -32,7 +33,7 @@ typedef struct EFact {
 } EFact;
 
 typedef struct Q10s {
-    char* cod;
+    Codigo cod;
     int vendas[4];    
     struct Q10s *next;
 } Q10s;
@@ -42,7 +43,7 @@ int compare_strings3(const void *pa, const void *pb) {
 
     const LFact *b = pb;
 
-    return strcmp(a->cod, b->cod);
+    return strcmp(get_codigo(a->cod), get_codigo(b->cod));
 }
 
 int travessia_tree_q4(const struct avl_node *node, int n, List list, int tipo) {    
@@ -53,25 +54,25 @@ int travessia_tree_q4(const struct avl_node *node, int n, List list, int tipo) {
     switch(tipo){
         case 0:
         if(old->vt1 == 0 && old->vt2 == 0 && old->vt3 == 0){
-            list = add_string_l(list, old->cod);
+            list = add_string_l(list, get_codigo(old->cod));
             n++;
         }
         break;
         case 1:
         if(old->vt1 == 0){
-            list = add_string_l(list, old->cod);
+            list = add_string_l(list, get_codigo(old->cod));
             n++;
         }
         break;
         case 2:
         if(old->vt2 == 0){
-            list = add_string_l(list, old->cod);
+            list = add_string_l(list, get_codigo(old->cod));
             n++;
         }
         break;
         case 3:
         if(old->vt3 == 0){
-            list = add_string_l(list, old->cod);
+            list = add_string_l(list, get_codigo(old->cod));
             n++;
         }
         break;
@@ -87,7 +88,8 @@ List q3(Fact fact, List list, int mes, char* cod, int tipo){
     int n;
     char* res = (char*) malloc(sizeof(char*)*50);
     LFact *novo = (LFact*) malloc(sizeof (LFact));
-    novo->cod = strdup(cod);
+    novo->cod = (Codigo*) malloc(sizeof (Codigo));
+    novo->cod = set_codigo(novo->cod, cod);
     novo = avl_find(fact->tree, novo);
     
     if(novo != NULL){
@@ -259,7 +261,8 @@ Q10s* q10_add_list(Q10s* res, char* cod, int n, int t, int n1, int n2, int n3){
     int count = 0, flag = 1; 
     while(aux != NULL && count < t && flag){
         if(aux->vendas[0] < n){
-            novo->cod = strdup(cod);
+            novo->cod = (Codigo*) malloc(sizeof (Codigo));
+            novo->cod = set_codigo(novo->cod, cod);
             novo->vendas[0] = n;
             novo->vendas[1] = n1;
             novo->vendas[2] = n2;
@@ -279,7 +282,8 @@ Q10s* q10_add_list(Q10s* res, char* cod, int n, int t, int n1, int n2, int n3){
         count++;
     }
     if(count < t && flag){
-        novo->cod = strdup(cod);
+        novo->cod = (Codigo*) malloc(sizeof (Codigo));
+        novo->cod = set_codigo(novo->cod, cod);
         novo->vendas[0] = n;
         novo->vendas[1] = n1;
         novo->vendas[2] = n2;
@@ -330,8 +334,8 @@ Fact insert_vendasF(Fact fact, char* prod, float valor, int uni, char* promo, in
 
     LFact *novo = (LFact*) malloc(sizeof (LFact));
     LFact *old;
-    novo->cod = (char*) malloc(sizeof (prod));
-    strcpy(novo->cod, prod);
+    novo->cod = (Codigo*) malloc(sizeof (Codigo));
+    novo->cod = set_codigo(novo->cod, prod);
 
     old = avl_find(fact->tree, novo);
 
@@ -388,12 +392,12 @@ Fact insert_vendasF(Fact fact, char* prod, float valor, int uni, char* promo, in
 
 
 
-Fact insert_produtosF(Fact fact, char* prod) {
+Fact insert_produtosF(Fact fact, char* cod) {
     LFact *novo = (LFact*) malloc(sizeof (LFact));
     int i = 0;
-    novo->cod = (char*) malloc(sizeof (prod));
+    novo->cod = (Codigo*) malloc(sizeof (Codigo));
+    novo->cod = set_codigo(novo->cod, cod);
 
-    strcpy(novo->cod, prod);
     for(i = 0; i<= 12; i++){
         novo->filial1[i] = novo_filial_fact();
         novo->filial2[i] = novo_filial_fact();
@@ -408,16 +412,6 @@ Fact insert_produtosF(Fact fact, char* prod) {
     avl_insert(fact->tree, novo);
 
     return fact;
-}
-
-void teste(Fact fact, char* prod) {
-    LFact *novo = (LFact*) malloc(sizeof (LFact));
-    LFact *old;
-    novo->cod = (char*) malloc(sizeof (prod));
-    strcpy(novo->cod, prod);
-
-    old = avl_find(fact->tree, novo);
-    
 }
 
 Fact criar_fact() {

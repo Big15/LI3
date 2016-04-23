@@ -1,11 +1,12 @@
 #include "CatC.h"
+#include "Codigo.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 typedef struct avl_table TClientes;
 
 typedef struct LClientes{
-    char* cod;
+    Codigo cod;
     struct LClientes *next;    
 }LClientes;
 
@@ -15,17 +16,18 @@ typedef struct CClientes{
 }CClientes;
 
 int compare_strings (const void *pa, const void *pb){
-    const char **a = pa;
-    const char **b = pb;
+    const LClientes *a = pa;
+    const LClientes *b = pb;
     
-    return strcmp(*a, *b);
+    return strcmp(get_codigo(a->cod), get_codigo(b->cod));
 }
 
 
 int check_cliente(Clientes cli, char* cod){
     int n;
     LClientes *novo = (LClientes*) malloc(sizeof (LClientes));
-    novo->cod = strdup(cod);
+    novo->cod = (Codigo*) malloc(sizeof (Codigo));
+    novo->cod = set_codigo(novo->cod, cod);
     novo = avl_find(cli->tree, novo);
     
     if(novo == NULL)
@@ -52,14 +54,16 @@ Clientes criar_clientes(){
 }
 
 Clientes insert_clientes (Clientes clientes, char* st){
-    LClientes *cliente = (LClientes*) malloc(sizeof(clientes->lista));
-    cliente->cod =(char*) malloc(sizeof(st));    
     
-    strcpy(cliente->cod, st);
+    LClientes *cliente = (LClientes*) malloc(sizeof(LClientes));
+    cliente->cod = (Codigo*) malloc(sizeof (Codigo));
+
+    cliente->cod = set_codigo(cliente->cod, st);
+    
     cliente->next = clientes->lista;
     clientes->lista = cliente;
     
-    avl_insert(clientes->tree, &cliente->cod); 
+    avl_insert(clientes->tree, cliente); 
             
     
     return clientes;

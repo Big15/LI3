@@ -1,4 +1,5 @@
 #include "CatP.h"
+#include "Codigo.h"
 #include <stdio.h>
 #include <stdlib.h>
 #define BUFSIZE 8192
@@ -7,7 +8,7 @@
 typedef struct avl_table TProdutos;
 
 typedef struct LProdutos {
-    char* cod;
+    Codigo cod;
     struct LProdutos *next;
 } LProdutos;
 
@@ -17,12 +18,12 @@ typedef struct CProdutos {
 } CProdutos;
 
 int compare_strings2(const void *pa, const void *pb) {
-    const char **a = pa;
+    const LProdutos *a = pa;
 
-    const char **b = pb;
+    const LProdutos *b = pb;
 
 
-    return strcmp(*a, *b);
+    return strcmp(get_codigo(a->cod), get_codigo(b->cod));
 }
 
 int travessia_treep_structure(const struct avl_node *node, int n, List* produtos) {    
@@ -40,12 +41,13 @@ int travessia_treep_structure(const struct avl_node *node, int n, List* produtos
 }
 
 int travessia_tree_q2(const struct avl_node *node, int n, List produtos, char c) {    
-    char* ch = strdup( *(int*) node->avl_data);
+    LProdutos *old = node->avl_data; 
+    char* ch = strdup(get_codigo(old->cod));
     if (node->avl_link[0] != NULL){
         n = travessia_tree_q2(node->avl_link[0], n, produtos, c);
     }
     if(ch[0] == c){
-        produtos = add_string_l(produtos, *(int*) node->avl_data);
+        produtos = add_string_l(produtos, ch);
         n++;
     }
     if(node->avl_link[1] != NULL){
@@ -73,7 +75,8 @@ List cria_lprodutos(Produtos produtos){
 int check_produto(Produtos prod, char* cod){
     int n;
     LProdutos *novo = (LProdutos*) malloc(sizeof (LProdutos));
-    novo->cod = strdup(cod);
+    novo->cod = (Codigo*) malloc(sizeof (Codigo));
+    novo->cod = set_codigo(novo->cod, cod);
     novo = avl_find(prod->tree, novo);
     
     if(novo == NULL)
@@ -101,16 +104,16 @@ Produtos criar_produtos() {
 
 Produtos insert_produtos(Produtos produtos, char* st) {
 
-    LProdutos *produto = (LProdutos*) malloc(sizeof (produtos->lista));
-    produto->cod = (char*) malloc(sizeof (st));
+    LProdutos *produto = (LProdutos*) malloc(sizeof (LProdutos));
+    produto->cod = (Codigo*) malloc(sizeof (Codigo));
+    produto->cod = set_codigo(produto->cod, st);
 
-    strcpy(produto->cod, st);
     produto->next = produtos->lista;
     produtos->lista = produto;
 
 
 
-    avl_insert(produtos->tree, &produto->cod);
+    avl_insert(produtos->tree, produto);
 
 
 

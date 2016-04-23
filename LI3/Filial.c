@@ -1,4 +1,5 @@
 #include "Filial.h"
+#include "Codigo.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -12,7 +13,7 @@ typedef struct InfFil {
 }InfFil;
 
 typedef struct LProdF {
-    char* cod;
+    Codigo cod;
     int total;
     InfFil filial1[13];
     InfFil filial2[13];
@@ -30,7 +31,7 @@ typedef struct EProdF{
 
 
 typedef struct LFilial{
-    char* cod;
+    Codigo cod;
     int total[13][4];
     EProdF lProdsFil;
     struct LFilial *next;
@@ -42,7 +43,7 @@ typedef struct EFilial{
 } EFilial;
 
 typedef struct Q9s {
-    char* cod;
+    Codigo cod;
     int vendas;    
     struct Q9s *next;
 } Q9s;
@@ -53,7 +54,7 @@ int compare_strings4(const void *pa, const void *pb) {
 
     const LFilial *b = pb;
 
-    return strcmp(a->cod, b->cod);
+    return strcmp(get_codigo(a->cod), get_codigo(b->cod));
 }
 
 int travessia_tree_q7(const struct avl_node *node) {
@@ -86,8 +87,8 @@ int travessia_tree_q8(const struct avl_node *node, char* prod, int filial, List 
     int n1 = 0, p = 0;
     
     LProdF *newL = (LProdF*) malloc(sizeof (LProdF));    
-    newL->cod = (char*) malloc(sizeof (prod));
-    strcpy(newL->cod, prod);
+    newL->cod = (Codigo*) malloc(sizeof (Codigo));
+    newL->cod = set_codigo(newL->cod, prod);
     
     LProdF *oldL;    
     LFilial *old = node->avl_data;
@@ -121,11 +122,11 @@ int travessia_tree_q8(const struct avl_node *node, char* prod, int filial, List 
             }
         }
         if(n1){
-            concat_string_l(list, old->cod, 0);
+            concat_string_l(list, get_codigo(old->cod), 0);
             concat_string_l(list, " ", 0);
         }
         if(p){
-            concat_string_l(list, old->cod, 1);
+            concat_string_l(list, get_codigo(old->cod), 1);
             concat_string_l(list, " ", 1);
         }
         
@@ -161,8 +162,8 @@ List q5(Filial fil, List list, char* cod){
     char* aux = (char*) malloc (sizeof(char*)*100);
     int i;
     
-    novo->cod = (char*) malloc(sizeof (cod));
-    strcpy(novo->cod, cod); 
+    novo->cod = (Codigo*) malloc(sizeof (Codigo));
+    novo->cod = set_codigo(novo->cod, cod);
     
     old = avl_find(fil->tree, novo);
     
@@ -203,7 +204,8 @@ int travessia_tree_q12_fili(const struct avl_node *node, int n) {
 int travessia_tree_q10_fili(const struct avl_node *node, int n, char* cod) {    
     LFilial *old = node->avl_data; 
     LProdF *prods = (LProdF*) malloc(sizeof(LProdF));
-    prods->cod = strdup(cod);
+    prods->cod = (Codigo*) malloc(sizeof (Codigo));
+    prods->cod = set_codigo(prods->cod, cod);
     int i, n1 = 0, n2 = 0, n3 = 0;
     if (node->avl_link[0] != NULL) {
         n = travessia_tree_q10_fili(node->avl_link[0], n, cod);
@@ -222,11 +224,12 @@ int travessia_tree_q10_fili(const struct avl_node *node, int n, char* cod) {
 Q9s* add_q9s(Q9s* res, char* cod, int n){
     Q9s *aux = res;
     Q9s *prev;
-    Q9s *novo = (Q9s*) malloc(sizeof(Q9s));    
+    Q9s *novo = (Q9s*) malloc(sizeof(Q9s));  
+    novo->cod = (Codigo*) malloc(sizeof (Codigo));    
     int count = 0, flag = 1; 
     while(aux != NULL && flag){
         if(aux->vendas < n){
-            novo->cod = strdup(cod);
+            novo->cod = set_codigo(novo->cod, cod);
             
             novo->vendas = n;            
             if(count == 0){
@@ -244,7 +247,7 @@ Q9s* add_q9s(Q9s* res, char* cod, int n){
         count++;
     }
     if(flag){
-        novo->cod = strdup(cod);
+        novo->cod = set_codigo(novo->cod, cod);
         novo->vendas = n;        
         aux = novo;
     }
@@ -259,7 +262,7 @@ Q9s* travessia_tree_q9(const struct avl_node *node, Q9s* res, int mes) {
         res = travessia_tree_q9(node->avl_link[0], res, mes);
     }
     
-    res = add_q9s(res, old->cod, ((old->filial1[mes].total)+(old->filial2[mes].total)+(old->filial3[mes].total)));
+    res = add_q9s(res, get_codigo(old->cod), ((old->filial1[mes].total)+(old->filial2[mes].total)+(old->filial3[mes].total)));
 
     if (node->avl_link[1] != NULL){
         res = travessia_tree_q9(node->avl_link[1], res, mes);
@@ -274,15 +277,15 @@ List q9(Filial fil, List list, char* cli, int mes){
     Q9s *res = (Q9s*) malloc(sizeof(Q9s));
     char* aux = (char*) malloc (sizeof(char*)*30);
     
-    novo->cod = (char*) malloc(sizeof (cli));
-    strcpy(novo->cod, cli);  
+    novo->cod = (Codigo*) malloc(sizeof (Codigo));
+    novo->cod = set_codigo(novo->cod, cli); 
     
     old = avl_find(fil->tree, novo);
     if(old != NULL){
         res = travessia_tree_q9(old->lProdsFil.tree->avl_root, res, mes);  
     }
     while(res != NULL && res->cod != NULL){
-        sprintf(aux, "%s - %d", res->cod, res->vendas);
+        sprintf(aux, "%s - %d", get_codigo(res->cod), res->vendas);
         list = add_string_l(list, aux);
         res = res->next;
     }
@@ -292,11 +295,12 @@ List q9(Filial fil, List list, char* cli, int mes){
 Q9s* add_q11s(Q9s* res, char* cod, int n){
     Q9s *aux = res;
     Q9s *prev;
-    Q9s *novo = (Q9s*) malloc(sizeof(Q9s));    
+    Q9s *novo = (Q9s*) malloc(sizeof(Q9s));
+    novo->cod = (Codigo*) malloc(sizeof (Codigo));    
     int count = 0, flag = 1; 
     while(aux != NULL && flag){
         if(aux->vendas < n){
-            novo->cod = strdup(cod);
+            novo->cod = set_codigo(novo->cod, cod);    
             
             novo->vendas = n;            
             if(count == 0){
@@ -314,7 +318,7 @@ Q9s* add_q11s(Q9s* res, char* cod, int n){
         count++;
     }
     if(flag){
-        novo->cod = strdup(cod);
+        novo->cod = set_codigo(novo->cod, cod);    
         novo->vendas = n;        
         aux = novo;
     }
@@ -333,7 +337,7 @@ Q9s* travessia_tree_q11(const struct avl_node *node, Q9s* res) {
         n += old->filial3[i].facturado;
     }
     
-    res = add_q9s(res, old->cod, n);
+    res = add_q9s(res, get_codigo(old->cod), n);
 
     if (node->avl_link[1] != NULL){
         res = travessia_tree_q11(node->avl_link[1], res);
@@ -349,15 +353,15 @@ List q11(Filial fil, List list, char* cli){
     Q9s *res = (Q9s*) malloc(sizeof(Q9s));
     char* aux = (char*) malloc (sizeof(char*)*30);
     
-    novo->cod = (char*) malloc(sizeof (cli));
-    strcpy(novo->cod, cli);  
+    novo->cod = (Codigo*) malloc(sizeof (Codigo));
+    novo->cod = set_codigo(novo->cod, cli);
     
     old = avl_find(fil->tree, novo);
     if(old != NULL){
         res = travessia_tree_q11(old->lProdsFil.tree->avl_root, res);  
     }
     while(res != NULL && res->cod != NULL && i < 3){
-        sprintf(aux, "%s - %d", res->cod, res->vendas);
+        sprintf(aux, "%s - %d", get_codigo(res->cod), res->vendas);
         list = add_string_l(list, aux);
         res = res->next;
         i++;
@@ -408,11 +412,11 @@ Filial insert_vendas_Filial(Filial fil, char* prod, float valor, int uni, char* 
     
     
     int i, flag = 1;
-    novo->cod = (char*) malloc(sizeof (cli));
-    strcpy(novo->cod, cli);  
+    novo->cod = (Codigo*) malloc(sizeof (Codigo));
+    novo->cod = set_codigo(novo->cod, cli);  
     
-    newL->cod = (char*) malloc(sizeof (prod));
-    strcpy(newL->cod, prod);
+    newL->cod = (Codigo*) malloc(sizeof (Codigo));
+    newL->cod = set_codigo(newL->cod, prod);
 
     old = avl_find(fil->tree, novo);
     
@@ -529,8 +533,8 @@ Filial instert_clientesFil(Filial fil, char* cod){
         
     
     int i = 0;
-    novo->cod = (char*) malloc(sizeof (cod));
-    strcpy(novo->cod, cod);
+    novo->cod = (Codigo*) malloc(sizeof (Codigo));
+    novo->cod = set_codigo(novo->cod, cod);
     for (i = 1; i <= 12; i++) {
         novo->total[i][1] = 0;
         novo->total[i][2] = 0;
