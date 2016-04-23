@@ -31,6 +31,12 @@ typedef struct EFact {
     LFact *lista;
 } EFact;
 
+typedef struct Q10s {
+    char* cod;
+    int vendas[4];    
+    struct Q10s *next;
+} Q10s;
+
 int compare_strings3(const void *pa, const void *pb) {
     const LFact *a = pa;
 
@@ -246,6 +252,80 @@ InfFact novo_filial_fact() {
     return novo;
 }
 
+Q10s* q10_add_list(Q10s* res, char* cod, int n, int t, int n1, int n2, int n3){
+    Q10s *aux = res;
+    Q10s *prev;
+    Q10s *novo = (Q10s*) malloc(sizeof(Q10s));    
+    int count = 0, flag = 1; 
+    while(aux != NULL && count < t && flag){
+        if(aux->vendas[0] < n){
+            novo->cod = strdup(cod);
+            novo->vendas[0] = n;
+            novo->vendas[1] = n1;
+            novo->vendas[2] = n2;
+            novo->vendas[3] = n3;
+            if(count == 0){
+                novo->next = res;
+                res = novo;
+            }
+            else{
+                novo->next = aux;
+                prev->next = novo;
+            }
+            flag = 0;
+        }
+        prev = aux;
+        aux = aux->next;
+        count++;
+    }
+    if(count < t && flag){
+        novo->cod = strdup(cod);
+        novo->vendas[0] = n;
+        novo->vendas[1] = n1;
+        novo->vendas[2] = n2;
+        novo->vendas[3] = n3;
+        aux = novo;
+    }
+    return res;
+}
+
+Q10s* travessia_tree_q10_fact(const struct avl_node *node, Q10s* res, int n) {
+    int i;
+    int t = 0;
+    LFact *old = node->avl_data;
+    if (node->avl_link[0] != NULL){
+        res = travessia_tree_q10_fact(node->avl_link[0], res, n);
+    }
+    
+    t = old->vt1 + old->vt2 + old->vt3;
+    res = q10_add_list(res, old->cod, t, n, old->vt1, old->vt2, old->vt3);
+    
+        
+    if(node->avl_link[1] != NULL){
+        res = travessia_tree_q10_fact(node->avl_link[1], res, n);
+    }    
+    
+    return res;
+}
+
+List q10_fact(Fact fact, List list, int n){
+    int i = 0;
+    char* aux = (char*) malloc (sizeof(char*)*30);
+    Q10s *res = (Q10s*) malloc(sizeof(Q10s));
+    res = travessia_tree_q10_fact(fact->tree->avl_root, res, n);
+    
+    while(res != NULL && i < n){
+        list = add_string_l(list, res->cod);
+        sprintf(aux, "%d - %d - %d - %d", res->vendas[0], res->vendas[1], res->vendas[2], res->vendas[3]);
+        list = add_string_l(list, aux);
+        //printf("%s - %d - %d - %d - %d\n", res->cod, res->vendas[0], res->vendas[1], res->vendas[2], res->vendas[3]);
+        res = res->next;
+        i++;
+    }
+    
+    return list;
+}
+
 Fact insert_vendasF(Fact fact, char* prod, float valor, int uni, char* promo, int mes, int filial) {
 
     LFact *novo = (LFact*) malloc(sizeof (LFact));
@@ -357,40 +437,3 @@ Fact criar_fact() {
 
     return fact;
 }
-/*
-print_tree_structure(const struct avl_node *node, int level) {
-    /* You can set the maximum level as high as you like.
-       Most of the time, you'll want to debug code using small trees,
-       so that a large |level| indicates a ``loop'', which is a bug. 
-    if (level > 100) {
-        printf("[...]");
-        return;
-    }
-
-    if (node == NULL)
-        return;
-
-    printf("%s", *(int *) node->avl_data);
-    if (node->avl_link[0] != NULL || node->avl_link[1] != NULL) {
-        putchar('(');
-
-        print_tree_structure(node->avl_link[0], level + 1);
-        if (node->avl_link[1] != NULL) {
-            putchar(',');
-            print_tree_structure(node->avl_link[1], level + 1);
-        }
-
-        putchar(')');
-    }
-}
-
-void print_whole_tree(const struct avl_table *tree, const char *title) {
-    printf("%s: ", title);
-    print_tree_structure(tree->avl_root, 0);
-    putchar('\n');
-}
-
-void *print(Fact clientes){
-    print_whole_tree(clientes->tree, "Cenas");
-    printf("Count: %d", clientes->tree->avl_count);
-}*/

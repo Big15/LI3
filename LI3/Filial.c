@@ -41,6 +41,13 @@ typedef struct EFilial{
     LFilial *lista;
 } EFilial;
 
+typedef struct Q9s {
+    char* cod;
+    int vendas;    
+    struct Q9s *next;
+} Q9s;
+
+
 int compare_strings4(const void *pa, const void *pb) {
     const LFilial *a = pa;
 
@@ -155,9 +162,10 @@ List q8(Filial fil, List list, char* prod, int filial){
 }
 
 List q7(Filial fil, List list){
+    char* aux = (char*) malloc (sizeof(char*)*100);
     int n = travessia_tree_q7(fil->tree->avl_root);
-    printf("%d clientes que compraram em todas as filiais\n", n);
-    
+    sprintf(aux, "%d clientes que compraram em todas as filiais", n);
+    add_string_l(list, aux);
     return list;
 }
 
@@ -165,6 +173,7 @@ List q7(Filial fil, List list){
 List q5(Filial fil, List list, char* cod){
     LFilial *novo = (LFilial*) malloc(sizeof (LFilial)); 
     LFilial *old;
+    char* aux = (char*) malloc (sizeof(char*)*100);
     int i;
     
     novo->cod = (char*) malloc(sizeof (cod));
@@ -173,9 +182,11 @@ List q5(Filial fil, List list, char* cod){
     old = avl_find(fil->tree, novo);
     
     if(old != NULL){
-        printf("Mes   Filial1   Filial2     Filial3\n");
+        sprintf(aux, "Mes   Filial1   Filial2     Filial3");
+        list = add_string_l(list, aux);
         for(i = 1; i <= 12; i++){
-            printf("%d   %d   %d     %d\n", i, old->total[i][1], old->total[i][2], old->total[i][3]);
+            sprintf(aux, "%d      %d          %d          %d", i, old->total[i][1], old->total[i][2], old->total[i][3]);
+            list = add_string_l(list, aux);
         }
     }
     return list;
@@ -194,7 +205,6 @@ int travessia_tree_q12_fili(const struct avl_node *node, int n) {
         n1 += old->total[i][3];        
     }
     if (n1 == 0) {
-            //printf("%s\n", old->cod);
             n++;
         }
 
@@ -205,10 +215,187 @@ int travessia_tree_q12_fili(const struct avl_node *node, int n) {
     return n;
 }
 
-List q12_fili(Filial fil, List list){
+int travessia_tree_q10_fili(const struct avl_node *node, int n, char* cod) {    
+    LFilial *old = node->avl_data; 
+    LProdF *prods = (LProdF*) malloc(sizeof(LProdF));
+    prods->cod = strdup(cod);
+    int i, n1 = 0, n2 = 0, n3 = 0;
+    if (node->avl_link[0] != NULL) {
+        n = travessia_tree_q10_fili(node->avl_link[0], n, cod);
+    }
+    
+    if(avl_find(old->lProdsFil.tree, prods))
+        n++;
+
+    if (node->avl_link[1] != NULL){
+        n = travessia_tree_q10_fili(node->avl_link[1], n, cod);
+    }    
+    
+    return n;
+}
+
+Q9s* add_q9s(Q9s* res, char* cod, int n){
+    Q9s *aux = res;
+    Q9s *prev;
+    Q9s *novo = (Q9s*) malloc(sizeof(Q9s));    
+    int count = 0, flag = 1; 
+    while(aux != NULL && flag){
+        if(aux->vendas < n){
+            novo->cod = strdup(cod);
+            
+            novo->vendas = n;            
+            if(count == 0){
+                novo->next = res;
+                res = novo;
+            }
+            else{
+                novo->next = aux;
+                prev->next = novo;
+            }
+            flag = 0;
+        }
+        prev = aux;
+        aux = aux->next;
+        count++;
+    }
+    if(flag){
+        novo->cod = strdup(cod);
+        novo->vendas = n;        
+        aux = novo;
+    }
+    return res;
+}
+
+Q9s* travessia_tree_q9(const struct avl_node *node, Q9s* res, int mes) {    
+    LProdF *old = node->avl_data; 
+    
+    int i, n1 = 0, n2 = 0, n3 = 0;
+    if (node->avl_link[0] != NULL) {
+        res = travessia_tree_q9(node->avl_link[0], res, mes);
+    }
+    
+    res = add_q9s(res, old->cod, ((old->filial1[mes].total)+(old->filial2[mes].total)+(old->filial3[mes].total)));
+
+    if (node->avl_link[1] != NULL){
+        res = travessia_tree_q9(node->avl_link[1], res, mes);
+    }    
+    
+    return res;
+}
+
+List q9(Filial fil, List list, char* cli, int mes){
+    LFilial *novo = (LFilial*) malloc(sizeof (LFilial));
+    LFilial *old;
+    Q9s *res = (Q9s*) malloc(sizeof(Q9s));
+    char* aux = (char*) malloc (sizeof(char*)*30);
+    
+    novo->cod = (char*) malloc(sizeof (cli));
+    strcpy(novo->cod, cli);  
+    
+    old = avl_find(fil->tree, novo);
+    if(old != NULL){
+        res = travessia_tree_q9(old->lProdsFil.tree->avl_root, res, mes);  
+    }
+    while(res != NULL && res->cod != NULL){
+        sprintf(aux, "%s - %d", res->cod, res->vendas);
+        list = add_string_l(list, aux);
+        res = res->next;
+    }
+    return list;
+}
+
+Q9s* add_q11s(Q9s* res, char* cod, int n){
+    Q9s *aux = res;
+    Q9s *prev;
+    Q9s *novo = (Q9s*) malloc(sizeof(Q9s));    
+    int count = 0, flag = 1; 
+    while(aux != NULL && flag){
+        if(aux->vendas < n){
+            novo->cod = strdup(cod);
+            
+            novo->vendas = n;            
+            if(count == 0){
+                novo->next = res;
+                res = novo;
+            }
+            else{
+                novo->next = aux;
+                prev->next = novo;
+            }
+            flag = 0;
+        }
+        prev = aux;
+        aux = aux->next;
+        count++;
+    }
+    if(flag){
+        novo->cod = strdup(cod);
+        novo->vendas = n;        
+        aux = novo;
+    }
+    return res;
+}
+
+Q9s* travessia_tree_q11(const struct avl_node *node, Q9s* res) {    
+    LProdF *old = node->avl_data; 
+    int n = 0, i;
+    if (node->avl_link[0] != NULL) {
+        res = travessia_tree_q11(node->avl_link[0], res);
+    }
+    for(i = 1; i <= 12; i++){
+        n += old->filial1[i].facturado;
+        n += old->filial2[i].facturado;
+        n += old->filial3[i].facturado;
+    }
+    
+    res = add_q9s(res, old->cod, n);
+
+    if (node->avl_link[1] != NULL){
+        res = travessia_tree_q11(node->avl_link[1], res);
+    }    
+    
+    return res;
+}
+
+List q11(Filial fil, List list, char* cli){
+    LFilial *novo = (LFilial*) malloc(sizeof (LFilial));
+    LFilial *old;
+    int i = 0;
+    Q9s *res = (Q9s*) malloc(sizeof(Q9s));
+    char* aux = (char*) malloc (sizeof(char*)*30);
+    
+    novo->cod = (char*) malloc(sizeof (cli));
+    strcpy(novo->cod, cli);  
+    
+    old = avl_find(fil->tree, novo);
+    if(old != NULL){
+        res = travessia_tree_q11(old->lProdsFil.tree->avl_root, res);  
+    }
+    while(res != NULL && res->cod != NULL && i < 3){
+        sprintf(aux, "%s - %d", res->cod, res->vendas);
+        list = add_string_l(list, aux);
+        res = res->next;
+        i++;
+    }
+    return list;
+}
+
+List q10_fili(Filial fil, List l, int t){
+    int i, n;
+    char* aux = (char*) malloc (sizeof(char*)*10);
+    for(i=0; i<get_np_l(l); i+=2){
+        n = travessia_tree_q10_fili(fil->tree->avl_root, 0, get_string_l(l, i));
+        sprintf(aux, " - %d", n);
+        l = concat_string_l(l, aux, i+1);
+    }
+    return l;
+    
+}
+
+List q12_fili(Filial fil, List list, int t){
     int n;
     char* res = (char*) malloc (sizeof(char*)*30);
-    n = travessia_tree_q12_fili(fil->tree->avl_root, 0);
+    n = travessia_tree_q10_fili(fil->tree->avl_root, list, t);
     sprintf(res, "Clientes que nunca compraram: %d", n);
     list = add_string_l(list, res);    
     
