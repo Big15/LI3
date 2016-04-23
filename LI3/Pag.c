@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "List.h"
 #include "Pag.h"
+#define NUM 20
 
 typedef struct pag {
     List pag;
@@ -10,9 +11,8 @@ typedef struct pag {
 };
 
 int getElems(Page pagina, Page novo) {
-
     novo->n = pagina->n;
-    return novo;
+    return novo->n;
 }
 
 Page cria_Pagina(List l, int a, int b) {
@@ -25,7 +25,7 @@ Page cria_Pagina(List l, int a, int b) {
 
 }
 
-Page getNextString(Page pagina, Page novo) {
+char* getNextString(Page pagina, Page novo) {
     char** str;
     int c = novo->n;
     novo->pag = pagina->pag;
@@ -36,7 +36,7 @@ Page getNextString(Page pagina, Page novo) {
 
 int getPag(Page pagina, Page novo) {
     novo->p = pagina->p;
-    return novo;
+    return novo->p;
 }
 
 Page next_Page(Page pagina, Page novo) {
@@ -56,6 +56,5 @@ Page next_Page(Page pagina, Page novo) {
     }
     return novo;
 }
-
 
 
