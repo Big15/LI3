@@ -6,9 +6,10 @@
 #include "CatC.h"
 #include "CatP.h"
 #include "Fact.h"
+#include "Filial.h"
+#include "List.h"
 
-
-void *ler_clientes(Clientes cC, char *filename) {
+void *ler_clientes(Clientes cC, Filial fil, char *filename) {
     int X = 10, i = 0, flag = 0, lidos = 0;
     char s[10];
     char* cod;
@@ -17,6 +18,7 @@ void *ler_clientes(Clientes cC, char *filename) {
         while (fgets(s, X, f)) {
             cod = strtok(s, "\r\n");
             cC = insert_clientes(cC, cod);
+            fil = instert_clientesFil(fil, cod);
             cod = (char*) malloc(10);
             lidos++;
         }
@@ -45,7 +47,7 @@ void *ler_produtos(Produtos cP, Fact fact, char * filename) {
     return NULL;
 }
 
-int ler_vendas(Fact fact, Clientes cC, Produtos cP, char * filename) {
+int ler_vendas(Fact fact, Filial fil, Clientes cC, Produtos cP, char * filename) {
     int X = 100, i = 0, lidos = 0, unidades = 0, mes = 0, filial =0;	//Necessário verificar se codigo de Prod e de Cliente
     int cfalha = 0, pfalha = 0, certos = 0, falhas = 0;
     float valor;
@@ -83,6 +85,7 @@ int ler_vendas(Fact fact, Clientes cC, Produtos cP, char * filename) {
             pfalha += check_produto(cP, codProd);
             if(!check_produto(cP, codProd) && !check_cliente(cC, codCliente)){
                 fact = insert_vendasF(fact, codProd, valor, unidades, promo, mes, filial);
+                fil = insert_vendas_Filial(fil, codProd, valor, unidades, promo, codCliente, mes, filial);
                 certos++;
             }
             else
@@ -116,45 +119,8 @@ int main() {
     Clientes cClientes;
     Produtos cProdutos;
     List list = novo_l();
-    Fact fact;/*
-
-    cClientes = criar_clientes();
-    cProdutos = criar_produtos();
-    fact = criar_fact();
-
-    ler_clientes(cClientes,  "Clientes.txt");
-    ler_produtos(cProdutos, fact, "Produtos.txt");
-    
-    
-    ler_vendas(fact, cClientes, cProdutos, "Vendas_1M.txt"); 
-    
-    //list = q2(cProdutos, list, 'A');
-    list = q3(fact, list, 7, "NR1091", 0);
-    
-    //teste(fact, "GK1523");
-    
-    //ListProdutos = q2(CProdutos, 'A');
-    travessia(list);
-    /*
-    ListClientes = cria_lclientes(CClientes);
-    int x = get_n_l(ListClientes);
-    printf("%d\n", x);
-    travessia(ListClientes);
-      
-     */
-    //print_clientes(ListClientes);
-                   
-
-    //print(fact);
-    //print(fact);
-    //print_whole_tree(CClientes->tree, "Cenas");
-    
-    // printf("%s\n", CClientes->lista->cod);
-
-    // print_whole_tree(CProdutos->tree, "Cenas");
-    // printf("%s\n", CProdutos->lista->cod);
-    // printf("AVL Clientes: %d\nAVL Produtos: %d\n",(int) CClientes->tree->avl_count, (int) CProdutos->tree->avl_count);
-    
+    Fact fact;
+    Filial filial;
     
     int n = 100;
     clock_t clock_start;
@@ -162,8 +128,7 @@ int main() {
     cClientes = criar_clientes();
     cProdutos = criar_produtos();
     fact = criar_fact();
-   
-    char*prods[25000];
+    filial = criar_filial();
     
     while (n != 0) {
         int z, w;
@@ -181,9 +146,9 @@ int main() {
                 z = getlinha("Ficheiro clientes (default: Clientes.txt):", buff, sizeof (buff));     
                 clock_start=clock();
                 if(!strcmp(buff, "\0"))
-                    ler_clientes(cClientes, "Clientes.txt");
+                    ler_clientes(cClientes, filial, "Clientes.txt");
                 else
-                    ler_clientes(cClientes, buff);
+                    ler_clientes(cClientes, filial, buff);
                 segundos = (double)(clock()- clock_start)/CLOCKS_PER_SEC;
                 printf("Tempo: %.2f\n", segundos);
                 
@@ -200,9 +165,9 @@ int main() {
                 z = getlinha("Ficheiro Vendas (default: Vendas_1M.txt):", buff, sizeof (buff));
                 clock_start=clock();
                 if(!strcmp(buff, "\0"))
-                    ler_vendas(fact, cClientes, cProdutos, "Vendas_1M.txt");
+                    ler_vendas(fact, filial, cClientes, cProdutos, "Vendas_1M.txt");
                 else
-                    ler_vendas(fact, cClientes, cProdutos, buff);
+                    ler_vendas(fact, filial, cClientes, cProdutos, buff);
                 segundos = (double)(clock()- clock_start)/CLOCKS_PER_SEC;
                 printf("Tempo: %.2f\n", segundos);
                 
