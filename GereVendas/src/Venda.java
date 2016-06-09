@@ -1,7 +1,3 @@
-package gerevendas;
-
-
-
 import java.io.Serializable;
 import java.util.*;
 
@@ -88,34 +84,9 @@ public class Venda implements Serializable {
         }
     }
     
-    
-     public static void comprasMes(ArrayList<Venda> vendas, HashMap<String, Cliente> clientes, HashMap<String, Produto> produtos){
-         Hipermercado hiper= new Hipermercado();
-        ArrayList<Venda> totalvendas= hiper.vendasValidas(vendas, clientes, produtos);
-        TreeMap<Integer, ArrayList<Venda>> comprasmes= hiper.parseAllLinhasToMap(totalvendas);
-        int count=0;
-        int i=1;
-           
-                
-                    for(ArrayList<Venda> cena: comprasmes.values()){
-                    for(Venda v: cena){
-                        if(v.getMes()==i)
-                            count++;
-                    
-                    else{
-                           System.out.println("Mês " +i + ":"+ count); 
-                           count=1;
-                           i++;
-                            }
-                    }
-                }
-                    System.out.println("Mês " +i + ":"+ count); 
-                
-                 
-                
-    
-    }
-
+    /*
+     
+*/
     public String toString() {
         StringBuilder s = new StringBuilder("-----Venda-----\n");
 
@@ -133,46 +104,4 @@ public class Venda implements Serializable {
     public Venda clone() {
         return new Venda(this);
     }
-    
-   /*
-   public static Venda parseLinhaVenda(String linha) {
-        Venda v = new Venda();
-        int i = 0; 
-        while (linha != null){
-         for(String s: linha.split(" ",6))
-         switch (i) {
-                    case 0: 
-                        codP = s;
-                        break;
-                    case 1: 
-                        preco = Double.parseDouble(s);
-                        break;
-                    case 2: 
-                        uni = Integer.parseInt(s);
-                        break;
-                    case 3: 
-                        promo = promo;
-                        break;
-                    case 4: 
-                        codC = codC;
-                        break;
-                    case 5: 
-                        mes = Integer.parseInt(s);
-                        break;
-                    case 6: 
-                        filial = Integer.parseInt(s);
-                        break;
-                }
-        i++;
-       
-        }
-        return v;
-    }
-/*
-    public static ArrayList<Venda> parseAllLinhas(ArrayList<String> linhas) {
-        ArrayList<Venda> aux = new ArrayList<Venda>();
-
-        return aux;
-    }*/
-
 }

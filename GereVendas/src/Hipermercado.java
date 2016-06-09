@@ -1,11 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package gerevendas;
-
-import static gerevendas.Test.parseLinhaVenda;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,6 +21,7 @@ import java.util.logging.Logger;
 public class Hipermercado implements Serializable{
 
     private ArrayList<Venda> vendasCarr;
+    private ArrayList<Venda> vendasValid;
     private HashMap<String, Cliente> listaclientes;
     private HashMap<String, Produto> listaprodutos;
     private TreeMap<String, ArrayList<Venda>> vendascliente;
@@ -36,7 +29,13 @@ public class Hipermercado implements Serializable{
 
    
     
-    
+    public Hipermercado(){
+        this.vendasCarr = new ArrayList<>();
+        this.vendasValid = new ArrayList<>();
+        this.listaclientes = new HashMap<>();
+        this.listaprodutos = new HashMap<>();
+        this.vendascliente = new TreeMap<>();              
+    }
     
     
     
@@ -82,8 +81,27 @@ public class Hipermercado implements Serializable{
     }
    
 
-    public static HashMap<String, Produto> carrega_produtos(String string) {
-        HashMap<String, Produto> novo = new HashMap<>();
+    public void carrega_produtos(String string) {
+        BufferedReader inStream = null;
+        this.listaprodutos = new HashMap<>();
+
+        try {
+            inStream = new BufferedReader(new FileReader(string));
+            String text = null;
+
+            while ((text = inStream.readLine()) != null) {
+                this.listaprodutos.put(text, new Produto(text));
+
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+
+        };
+
+    }
+
+    public void carrega_vendas(String string) {
+        this.vendasCarr = new ArrayList<>();
         BufferedReader inStream = null;
 
         try {
@@ -91,38 +109,18 @@ public class Hipermercado implements Serializable{
             String text = null;
 
             while ((text = inStream.readLine()) != null) {
-                novo.put(text, new Produto(text));
-
+                this.vendasCarr.add(parseLinhaVenda(text));
             }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-
-        };
-        return novo;
-
-    }
-
-    public static ArrayList<String> carrega_vendas(String string) {
-        ArrayList<String> novo = new ArrayList<>();
-        BufferedReader inStream = null;
-
-        try {
-            inStream = new BufferedReader(new FileReader(string));
-            String text = null;
-
-            while ((text = inStream.readLine()) != null) {
-                novo.add(text);
-            }
+            this.vendasValidas();
 
         } catch (IOException e) {
             System.out.println(e.getMessage());
 
         };
-        return novo;
     }
 
-    public static HashMap<String, Cliente> carrega_clientes(String string) {
-        HashMap<String, Cliente> novo = new HashMap<>();
+    public void carrega_clientes(String string) {
+        this.listaclientes = new HashMap<>();
         BufferedReader inStream = null;
 
         try {
@@ -131,30 +129,31 @@ public class Hipermercado implements Serializable{
 
             while ((text = inStream.readLine()) != null) {
 
-                novo.put(text, new Cliente(text));
+                this.listaclientes.put(text, new Cliente(text));
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
 
         };
-        return novo;
 
     }
 
-    public static ArrayList<Venda> vendasValidas(ArrayList<Venda> vendas, HashMap<String, Cliente> clientes, HashMap<String, Produto> produtos) {
+    public void vendasValidas() {
         int i = 0;
-        ArrayList<Venda> vendasValidas = new ArrayList<>();
+        this.vendasValid = new ArrayList<>();
 
-        for (Venda v : vendas) {
-            if (clientes.containsKey(v.getCodC()) && produtos.containsKey(v.getCodP())) {
-                vendasValidas.add(v.clone());
+        for (Venda v : this.vendasCarr) {
+            if (this.listaclientes.containsKey(v.getCodC()) && this.listaprodutos.containsKey(v.getCodP())) {
+                this.vendasValid.add(v.clone());
             }
         }
-        return vendasValidas;
-
+    }
+    
+    public int nvendasValidas(){
+        return this.vendasValid.size();
     }
 
-    public static Venda parseLinhaVenda(String linha, HashMap<String, Cliente> clientes, HashMap<String, Produto> produtos) {
+    public Venda parseLinhaVenda(String linha) {
 
         String[] line = null;
 
@@ -170,33 +169,28 @@ public class Hipermercado implements Serializable{
         return v;
     }
 
-    public static int vendasUnidades(ArrayList<Venda> vendas, HashMap<String, Cliente> clientes, HashMap<String, Produto> produtos) {
+    public int vendasUnidades() {
         int i = 0;
-        ArrayList<Venda> totalvendas = vendasValidas(vendas, clientes, produtos);
-
-        for (Venda v : totalvendas) {
+        for(Venda v: this.vendasValid){
             i += v.getUni();
         }
-
         return i;
     }
 
-    public static float factTotal(ArrayList<Venda> vendas, HashMap<String, Cliente> clientes, HashMap<String, Produto> produtos) {
+    public float factTotal() {
         float i = 0.0f;
-        ArrayList<Venda> totalvendas = vendasValidas(vendas, clientes, produtos);
 
-        for (Venda v : totalvendas) {
+        for (Venda v : this.vendasValid) {
             i += v.getPreco();
         }
 
         return i;
     }
 
-    public static int preco0(ArrayList<Venda> vendas, HashMap<String, Cliente> clientes, HashMap<String, Produto> produtos) {
-        ArrayList<Venda> totalvendas = vendasValidas(vendas, clientes, produtos);
+    public int preco0() {
         int i = 0;
 
-        for (Venda v : totalvendas) {
+        for (Venda v : this.vendasValid) {
             if (v.getPreco() == 0) {
                 i++;
 
@@ -206,20 +200,10 @@ public class Hipermercado implements Serializable{
 
     }
 
-    public static int cliDif(ArrayList<Venda> vendas, HashMap<String, Cliente> clientes, HashMap<String, Produto> produtos) {
-        ArrayList<Venda> totalvendas = vendasValidas(vendas, clientes, produtos);
-        TreeSet<String> novo = new TreeSet<>();
-        for (Venda v : totalvendas) {
-            novo.add(v.getCodC());
-        }
-        return novo.size();
-    }
-
-    public static int cliCompras(ArrayList<Venda> vendas, HashMap<String, Cliente> clientes, HashMap<String, Produto> produtos) {
-        ArrayList<Venda> totalvendas = vendasValidas(vendas, clientes, produtos);
+    public int cliCompras() {
         TreeSet<String> novo = new TreeSet<>();
 
-        for (Venda v : totalvendas) {
+        for (Venda v : this.vendasValid) {
             novo.add(v.getCodC());
         }
 
@@ -227,16 +211,15 @@ public class Hipermercado implements Serializable{
 
     }
 
-    public static int cliNcompras(ArrayList<Venda> vendas, HashMap<String, Cliente> clientes, HashMap<String, Produto> produtos) {
+    public int cliNcompras() {
 
-        return cliCompras(vendas, clientes, produtos) - clientes.size();
+        return cliCompras() - this.listaclientes.size();
     }
 
-    public static int prodDif(ArrayList<Venda> vendas, HashMap<String, Cliente> clientes, HashMap<String, Produto> produtos) {
-        ArrayList<Venda> totalvendas = vendasValidas(vendas, clientes, produtos);
+    public int prodDif() {
         TreeSet<String> aux = new TreeSet<>();
 
-        for (Venda v : totalvendas) {
+        for (Venda v : this.vendasValid) {
             aux.add(v.getCodP());
         }
 
@@ -244,18 +227,26 @@ public class Hipermercado implements Serializable{
 
     }
 
-    public static int prodNcomprados(ArrayList<Venda> vendas, HashMap<String, Cliente> clientes, HashMap<String, Produto> produtos) {
-        ArrayList<Venda> totalvendas = vendasValidas(vendas, clientes, produtos);
+    public int prodNcomprados() {
         TreeSet<String> aux = new TreeSet<>();
 
-        for (Venda v : totalvendas) {
+        for (Venda v : this.vendasValid) {
             aux.add(v.getCodP());
         }
 
-        return produtos.size() - aux.size();
+        return this.listaprodutos.size() - aux.size();
 
     }
-
+    
+    public int nProds(){
+        return this.listaprodutos.size();
+    }
+    
+    public int nClie(){
+        return this.listaclientes.size();
+    }
+    
+/*
     public static ArrayList<Venda> parseAllLinhas(ArrayList<String> linhas, HashMap<String, Cliente> clientes, HashMap<String, Produto> produtos) {
         ArrayList<Venda> array = new ArrayList<>();
 
@@ -277,12 +268,11 @@ public class Hipermercado implements Serializable{
         System.out.println("Tempo: " + Crono.print() + " segundos");
         return array;
     }
-
-    public static TreeMap<Integer, ArrayList<Venda>> parseAllLinhasToMap(ArrayList<Venda> linhas) {
+*/
+    public TreeMap<Integer, ArrayList<Venda>> parseAllLinhasToMap() {
         TreeMap<Integer, ArrayList<Venda>> array = new TreeMap<>();
         ArrayList<Venda> novo = new ArrayList<>();
-
-        for (Venda s : linhas) {
+        for (Venda s : this.vendasValid) {
             if (array.containsKey(s.getMes())) {
                 novo = array.get(s.getMes());
                 novo.add(s.clone());
@@ -297,137 +287,42 @@ public class Hipermercado implements Serializable{
         return array;
     }
 
-    public static int vendasDup(ArrayList<Venda> array) {
+    public int vendasDup() {
         Set<Venda> novo = new HashSet<>();
         int total;
 
-        novo.addAll(array);
+        novo.addAll(this.vendasCarr);
 
-        total = (array.size() - novo.size());
+        total = (this.vendasCarr.size() - novo.size());
 
         return total;
     }
     
   //Estatísticas para registados nas estruturas:
-    
-   
-
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
-        int lifetime = 1, load = 0;
-        ArrayList<String> vendas = new ArrayList<>();
-        InputStreamReader reader = new InputStreamReader(System.in);
-        BufferedReader input = new BufferedReader(reader);
-        String aux;
-        String fileClientes = null, fileVendas = null, fileProdutos = null;
-        Hipermercado main = new Hipermercado();
-        Venda vnova=new Venda();
-        main.listaclientes = new HashMap<>();
-        main.listaprodutos = new HashMap<>();
-        main.vendascliente = new TreeMap<>();
-       
-        main.vendasCarr = new ArrayList<>();
-
-        System.out.println("//***********************************************************************************************************************************\\");
-        System.out.println("//***********************************************************************************************************************************\\");
-        System.out.println("//***                                                          GEREVENDAS                                                          ***\\");
-        System.out.println("//***********************************************************************************************************************************\\");
-        System.out.println("//***                                           Deseja carregar os ficheiros default? (s/n)                                       ***\\");
-        System.out.println("//***********************************************************************************************************************************\\");
-        aux = input.readLine();
-        if (aux.equals("s")) {
-            fileClientes = "Clientes.txt";
-            fileProdutos = "Produtos.txt";
-            fileVendas = "Vendas_1M.txt";
-
-        } else if (aux.equals("n")) {
+/*
+    public void comprasMes(){
+        TreeMap<Integer, ArrayList<Venda>> comprasmes = hiper.parseAllLinhasToMap(totalvendas);
+        int count=0;
+        int i=1;
            
-
-        }
-
-        while (lifetime == 1) {
-            if (load == 0) {
-                System.out.println("//***********************************************************************************************************************************\\");
-                System.out.println("//***********************************************************************************************************************************\\");
-                System.out.println("//***                                                          Estatísticas                                                          ***\\");
-                System.out.println("//***********************************************************************************************************************************\\");
-
-                System.out.println("Ficheiro " + fileProdutos);
-                Crono.start();
-                main.listaprodutos = main.carrega_produtos(fileProdutos);
-                Crono.stop();
-                System.out.println("Tempo: " + Crono.print() + " segundos");
-                System.out.println("Ficheiro " + fileClientes);
-                Crono.start();
-
-                main.listaclientes = main.carrega_clientes(fileClientes);
-                Crono.stop();
-                System.out.println("Tempo: " + Crono.print() + " segundos");
-                System.out.println("Ficheiro " + fileVendas);
-                Crono.start();
-                vendas = main.carrega_vendas(fileVendas);
-                Crono.stop();
-                System.out.println("Tempo: " + Crono.print() + " segundos");
-                main.vendasCarr = parseAllLinhas(vendas, main.listaclientes, main.listaprodutos);
-                System.out.println("Vendas válidas: " + vendasValidas(main.vendasCarr, main.listaclientes, main.listaprodutos).size());
-                System.out.println("Número Total de Produtos: " + main.listaprodutos.size());
-                System.out.println("Número Total de Clientes: " + main.listaclientes.size());
-                System.out.println("Total de Clientes que compraram: " + main.cliCompras(main.vendasCarr, main.listaclientes, main.listaprodutos));
-                System.out.println("Total de Clientes que nunca compraram: " + main.cliNcompras(main.vendasCarr, main.listaclientes, main.listaprodutos));
-                System.out.println("Total de Clientes diferentes: " + main.cliDif(main.vendasCarr, main.listaclientes, main.listaprodutos));
-                //  System.out.println("Número de Unidades vendidas: " + main.vendasUnidades());
-                System.out.println("Total facturado: " + main.factTotal(main.vendasCarr, main.listaclientes, main.listaprodutos));
-                System.out.println("Total de compras preço = 0.0 : " + main.preco0(main.vendasCarr, main.listaclientes, main.listaprodutos));
-                System.out.println("Total de produtos nunca comprados: " + main.prodNcomprados(main.vendasCarr, main.listaclientes, main.listaprodutos));
-                System.out.println("Total de Produtos diferentes comprados: " + main.prodDif(main.vendasCarr, main.listaclientes, main.listaprodutos));
-                vnova.comprasMes(main.vendasCarr, main.listaclientes, main.listaprodutos);
-                System.out.println("//***********************************************************************************************************************************\\");
                 
-                /* try {
-                    main.comprasmes = parseAllLinhasToMap(main.totalvendas);
-                } catch (ClassCastException e) {
-                    System.out.println(e.getMessage());
-                }
-
-                try {
-                    main.vendascliente = parseAllLinhasToSet(main.totalvendas);
-                } catch (ClassCastException e) {
-                    System.out.println(e.getMessage());
-                }*/
-            }
-
-            System.out.println("//***********************************************************************************************************************************\\");
-            System.out.println("//***********************************************************************************************************************************\\");
-            System.out.println("//***                                                          GEREVENDAS                                                          ***\\");
-            System.out.println("//***********************************************************************************************************************************\\");
-            System.out.println("//*** 0- Gravar estado");
-            System.out.println("//*** 1- Lista ordenada com os códigos dos produtos nunca comprados e respectivo total.                                           ***\\");
-            System.out.println("//*** 2- Lista ordenada com os códigos dos clientes que nunca compraram e seu total.                                              ***\\");
-            System.out.println("//*** 3- Dado um mês válido, determinar o número total de compras e o total de clientes distintos que as realizaram.              ***\\");
-            System.out.println("//*** 4- Para um cliente, determinar, para cada mês, quantas compras fez, quantos produtos distintos comprou E quanto gastou.     ***\\");
-            System.out.println("//*** 5- Para um produto, determinar, mês a mês, quantas vezes foi comprado, por quantos clientes diferentes e o total facturado. ***\\");
-            System.out.println("//*** 6- Para um produto, determinar, mês a mês, quantas vezes foi comprado em modo N e em modo P e respectivas facturações.      ***\\");
-            System.out.println("//*** 7- Dado o código de um cliente determinar a lista de códigos de produtos que mais comprou (e quantos).                      ***\\");
-            System.out.println("//*** 8- Determinar os X produtos mais vendidos em todo o ano e o número total de distintos clientes que o compraram.             ***\\");
-            System.out.println("//*** 9- Determinar os X clientes que compraram um maior número de diferentes produtos indicando quantos.                         ***\\");
-            System.out.println("//*** 10- Dado o código de um produto, determinar o conjunto dos X clientes que mais o compraram.                                 ***\\");
-            System.out.println("//***********************************************************************************************************************************\\");
-            System.out.println("//***********************************************************************************************************************************\\");
-
-            aux = input.readLine();
-
-            switch (aux) {
-                case "0":
-                    int c = 0;
-                    main.gravaObj("hipermercado.dat");
+                    for(ArrayList<Venda> cena: comprasmes.values()){
+                    for(Venda v: cena){
+                        if(v.getMes()==i)
+                            count++;
                     
-                                        break;
-
-                case "1":
-                // for(Cliente c: main.listaclientes)
-                //   System.out.println(c);
-
-            }
-        }
+                    else{
+                           System.out.println("Mês " +i + ":"+ count); 
+                           count=1;
+                           i++;
+                            }
+                    }
+                }
+                    System.out.println("Mês " +i + ":"+ count); 
+                
+                 
+                
+    
     }
-
+*/
 }
