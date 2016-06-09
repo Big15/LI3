@@ -1,9 +1,11 @@
 package gerevendas;
 
 
+
+import java.io.Serializable;
 import java.util.*;
 
-public class Venda {
+public class Venda implements Serializable {
 
     private String codP;
     private String codC;
@@ -84,6 +86,34 @@ public class Venda {
             return (this.getCodP().equals(v.getCodP()) && this.getCodC().equals(v.getCodC()) && this.getPreco() == (v.getPreco())
                     && this.getFilial() == (v.getFilial()) && this.getUni() == (v.getUni()) && this.getMes() == (v.getMes()) && this.getPromo().equals(v.getPromo()));
         }
+    }
+    
+    
+     public static void comprasMes(ArrayList<Venda> vendas, HashMap<String, Cliente> clientes, HashMap<String, Produto> produtos){
+         Hipermercado hiper= new Hipermercado();
+        ArrayList<Venda> totalvendas= hiper.vendasValidas(vendas, clientes, produtos);
+        TreeMap<Integer, ArrayList<Venda>> comprasmes= hiper.parseAllLinhasToMap(totalvendas);
+        int count=0;
+        int i=1;
+           
+                
+                    for(ArrayList<Venda> cena: comprasmes.values()){
+                    for(Venda v: cena){
+                        if(v.getMes()==i)
+                            count++;
+                    
+                    else{
+                           System.out.println("Mês " +i + ":"+ count); 
+                           count=1;
+                           i++;
+                            }
+                    }
+                }
+                    System.out.println("Mês " +i + ":"+ count); 
+                
+                 
+                
+    
     }
 
     public String toString() {

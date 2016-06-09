@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import static java.lang.System.out;
 import java.util.*;
 import java.util.logging.Level;
@@ -25,21 +26,31 @@ import java.util.logging.Logger;
  *
  * @author Demo
  */
-public class Hipermercado {
+public class Hipermercado implements Serializable{
 
     private ArrayList<Venda> vendasCarr;
     private HashMap<String, Cliente> listaclientes;
     private HashMap<String, Produto> listaprodutos;
     private TreeMap<String, ArrayList<Venda>> vendascliente;
-    private TreeMap<Integer, ArrayList<Venda>> comprasmes;
 
-    public void gravaObj(String fich) throws IOException {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fich))) {
-            oos.writeObject(this);
 
-            oos.flush();
-        }
+   
+    
+    
+    
+    
+    
+     public void gravaObj(String fich) throws IOException {
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fich));
+        oos.writeObject(this);
+        
+        
+        oos.flush();
+        oos.close();
     }
+    
+    
+    
 
     public static Hipermercado leObj(String fich) throws IOException, ClassNotFoundException {
         Hipermercado te;
@@ -51,8 +62,12 @@ public class Hipermercado {
 
     public static Hipermercado initApp() {
         Hipermercado imo;
+        String fileClientes = null, fileVendas = null, fileProdutos = null;
         try {
             imo = Hipermercado.leObj("estado.tabemp");
+            fileClientes="Clientes.txt";
+            fileProdutos="Produtos.txt";
+            fileVendas="Vendas_1M";
         } catch (IOException e) {
             imo = new Hipermercado();
             System.out.println("Não existem dados gravados|\nErro de leitura.");
@@ -65,6 +80,7 @@ public class Hipermercado {
         }
         return imo;
     }
+   
 
     public static HashMap<String, Produto> carrega_produtos(String string) {
         HashMap<String, Produto> novo = new HashMap<>();
@@ -291,6 +307,10 @@ public class Hipermercado {
 
         return total;
     }
+    
+  //Estatísticas para registados nas estruturas:
+    
+   
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         int lifetime = 1, load = 0;
@@ -300,10 +320,11 @@ public class Hipermercado {
         String aux;
         String fileClientes = null, fileVendas = null, fileProdutos = null;
         Hipermercado main = new Hipermercado();
+        Venda vnova=new Venda();
         main.listaclientes = new HashMap<>();
         main.listaprodutos = new HashMap<>();
         main.vendascliente = new TreeMap<>();
-        main.comprasmes = new TreeMap<>();
+       
         main.vendasCarr = new ArrayList<>();
 
         System.out.println("//***********************************************************************************************************************************\\");
@@ -319,13 +340,7 @@ public class Hipermercado {
             fileVendas = "Vendas_1M.txt";
 
         } else if (aux.equals("n")) {
-            System.out.println("//***********************************************************************************************************************************\\");
-            System.out.println("//***********************************************************************************************************************************\\");
-            System.out.println("//***                                                          GEREVENDAS                                                          ***\\");
-            System.out.println("//***********************************************************************************************************************************\\");
-            System.out.println("//***                                          Introduza o nome do ficheiro para as Vendas                                     ***\\");
-            System.out.println("//***********************************************************************************************************************************\\");
-            fileVendas = input.readLine();
+           
 
         }
 
@@ -364,6 +379,7 @@ public class Hipermercado {
                 System.out.println("Total de compras preço = 0.0 : " + main.preco0(main.vendasCarr, main.listaclientes, main.listaprodutos));
                 System.out.println("Total de produtos nunca comprados: " + main.prodNcomprados(main.vendasCarr, main.listaclientes, main.listaprodutos));
                 System.out.println("Total de Produtos diferentes comprados: " + main.prodDif(main.vendasCarr, main.listaclientes, main.listaprodutos));
+                vnova.comprasMes(main.vendasCarr, main.listaclientes, main.listaprodutos);
                 System.out.println("//***********************************************************************************************************************************\\");
                 
                 /* try {
@@ -383,7 +399,7 @@ public class Hipermercado {
             System.out.println("//***********************************************************************************************************************************\\");
             System.out.println("//***                                                          GEREVENDAS                                                          ***\\");
             System.out.println("//***********************************************************************************************************************************\\");
-            System.out.println("//*** 0- Estatísticas: ");
+            System.out.println("//*** 0- Gravar estado");
             System.out.println("//*** 1- Lista ordenada com os códigos dos produtos nunca comprados e respectivo total.                                           ***\\");
             System.out.println("//*** 2- Lista ordenada com os códigos dos clientes que nunca compraram e seu total.                                              ***\\");
             System.out.println("//*** 3- Dado um mês válido, determinar o número total de compras e o total de clientes distintos que as realizaram.              ***\\");
@@ -402,28 +418,9 @@ public class Hipermercado {
             switch (aux) {
                 case "0":
                     int c = 0;
-
-                    for (Integer i : main.comprasmes.keySet()) {
-                        ArrayList<Venda> novo = new ArrayList<>();
-                        novo = main.comprasmes.get(i);
-                        for (Venda v : novo) {
-                            if (v.getMes() == 12) {
-                                c++;
-                            }
-
-                        }
-                    }
-                    System.out.println(c);
-
-                    /*int i=0;
-                       for(Venda v : main.totalvendas){
-                       if(v.getMes()==1){
-                           i++;
-                           System.out.println(v.getMes());
-                        }
-                       System.out.println(i);
-                       } */
-                    break;
+                    main.gravaObj("hipermercado.dat");
+                    
+                                        break;
 
                 case "1":
                 // for(Cliente c: main.listaclientes)
