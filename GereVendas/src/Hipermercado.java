@@ -140,7 +140,7 @@ public class Hipermercado {
     }
 
     public void parseLinhaVenda(String linha) {
-      
+
         String[] line = null;
 
         line = linha.split(" ");
@@ -151,84 +151,98 @@ public class Hipermercado {
 
         Venda v = new Venda(line[0], Float.parseFloat(line[1]), Integer.parseInt(line[2]), line[3], line[4], Integer.parseInt(line[5]), Integer.parseInt(line[6]));
 
-        
-         if ((existeProduto(line[0]) && existeCliente(line[4]))){
-          this.totalvendas.add(v.clone());
-          
-         }
-        
-     /*else{
+        if ((existeProduto(line[0]) && existeCliente(line[4]))) {
+            this.totalvendas.add(v.clone());
+
+        }
+
+        /*else{
           if (!(existeProduto(line[0]) && existeCliente(line[4]))){
             validas.add(v.clone());
             this.vendasInvalidas=erradas;
           }
           }*/
-      
-               
-    
     }
 
-    
-    public int vendasUnidades(){
-        int i=0;
-        
-        for(Venda v: totalvendas)
-        i+=v.getUni();
-        
+    public int vendasUnidades() {
+        int i = 0;
+
+        for (Venda v : totalvendas) {
+            i += v.getUni();
+        }
+
         return i;
     }
 
-    public float factTotal(){
-        float i=0.0f;
-        
-        for(Venda v: totalvendas)
-            i+=v.getPreco();
-        
+    public float factTotal() {
+        float i = 0.0f;
+
+        for (Venda v : totalvendas) {
+            i += v.getPreco();
+        }
+
         return i;
     }
-    
-    public int preco0(){
-            
-            int i=0;
-            
-            for(Venda v: totalvendas){
-              if(v.getPreco()==0){
+
+    public int preco0() {
+
+        int i = 0;
+
+        for (Venda v : totalvendas) {
+            if (v.getPreco() == 0) {
                 i++;
-            
-        }
+
             }
+        }
         return i;
-        
+
     }
-    
-    
-    
-    public int clientes00(){
-        int i=0;
-        
-        for(Venda v: totalvendas){
-            if(listaclientes.containsKey(v.getCodC())){
-                if(v.getUni()==0)
-                    i++;
-            }
+
+    public int cliDif() {
+        TreeSet<String> novo = new TreeSet<>();
+        for (Venda v : totalvendas) {
+            novo.add(v.getCodC());
         }
-        return i;
-                
-}
-    public int prodDif(){
-// WHAT THE FUCK!?!?! EU TAVA A FAZER OS PRODUTOS DIFERENTES E DEU-ME OS PRODUTOS NÃO COMPRADOS. COMO?
-        
-        TreeSet<String> aux= new TreeSet<>();
-        
- 
-            for(Venda v: totalvendas){
-                aux.add(v.getCodP());
-            }
-        
-                
-        
-        return listaprodutos.size()-aux.size();
-        
+        return novo.size();
+    }
+
+    public int cliCompras() {
+        TreeSet<String> novo = new TreeSet<>();
+
+        for (Venda v : totalvendas) {
+            novo.add(v.getCodC());
+        }
+
+        return novo.size();
+
+    }
+
+    public int cliNcompras() {
+
+        return cliCompras() - listaclientes.size();
+    }
+
+    public int prodDif() {
+        TreeSet<String> aux = new TreeSet<>();
+
+        for (Venda v : totalvendas) {
+            aux.add(v.getCodP());
+        }
+
+        return aux.size();
+
+    }
+
+    public int prodNcomprados() {
+
+        TreeSet<String> aux = new TreeSet<>();
+
+        for (Venda v : totalvendas) {
+            aux.add(v.getCodP());
+        }
+
+        return listaprodutos.size() - aux.size();
+
     }
 
     public static TreeMap<String, ArrayList<Venda>> parseAllLinhasToSet(ArrayList<Venda> linhas) {
@@ -321,6 +335,11 @@ public class Hipermercado {
 
         while (lifetime == 1) {
             if (load == 0) {
+            System.out.println("//***********************************************************************************************************************************\\");
+            System.out.println("//***********************************************************************************************************************************\\");
+            System.out.println("//***                                                          Estatísticas                                                          ***\\");
+            System.out.println("//***********************************************************************************************************************************\\");
+                
                 System.out.println("Ficheiro " + fileProdutos);
                 Crono.start();
                 main.carrega_produtos(fileProdutos);
@@ -340,18 +359,17 @@ public class Hipermercado {
                 System.out.println("Vendas validadas: " + main.totalvendas.size());
                 System.out.println("Número Total de Produtos: " + main.listaprodutos.size());
                 System.out.println("Número Total de Clientes: " + main.listaclientes.size());
-                System.out.println("Total de Clientes que nunca compraram: " + main.clientes00());
+                System.out.println("Total de Clientes que compraram: " + main.cliCompras());
+                System.out.println("Total de Clientes que nunca compraram: " + main.cliNcompras());
+                System.out.println("Total de Clientes diferentes: " + main.cliDif());
                 System.out.println("Número de Unidades vendidas: " + main.vendasUnidades());
                 System.out.println("Total facturado: " + main.factTotal());
                 System.out.println("Total de compras preço = 0.0 : " + main.preco0());
+                System.out.println("Total de produtos nunca comprados: " + main.prodNcomprados());
                 System.out.println("Total de Produtos diferentes comprados: " + main.prodDif());
-                
-                
-               // System.out.println("Vendas Erradas: " + main.vendasInvalidas.size());
-                
-                
-
-               /* try {
+                System.out.println("//***********************************************************************************************************************************\\");
+                // System.out.println("Vendas Erradas: " + main.vendasInvalidas.size());
+                /* try {
                     main.comprasmes = parseAllLinhasToMap(main.totalvendas);
                 } catch (ClassCastException e) {
                     System.out.println(e.getMessage());
@@ -362,7 +380,6 @@ public class Hipermercado {
                 } catch (ClassCastException e) {
                     System.out.println(e.getMessage());
                 }*/
-
             }
 
             System.out.println("//***********************************************************************************************************************************\\");
