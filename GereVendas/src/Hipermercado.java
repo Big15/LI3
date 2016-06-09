@@ -81,61 +81,12 @@ public class Hipermercado implements Serializable{
     }
    
 
-    public void carrega_produtos(String string) {
-        BufferedReader inStream = null;
-        this.listaprodutos = new HashMap<>();
-
-        try {
-            inStream = new BufferedReader(new FileReader(string));
-            String text = null;
-
-            while ((text = inStream.readLine()) != null) {
-                this.listaprodutos.put(text, new Produto(text));
-
-            }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-
-        };
-
+    public void addProduto(String text){
+        this.listaprodutos.put(text, new Produto(text));
     }
-
-    public void carrega_vendas(String string) {
-        this.vendasCarr = new ArrayList<>();
-        BufferedReader inStream = null;
-
-        try {
-            inStream = new BufferedReader(new FileReader(string));
-            String text = null;
-
-            while ((text = inStream.readLine()) != null) {
-                this.vendasCarr.add(parseLinhaVenda(text));
-            }
-            this.vendasValidas();
-
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-
-        };
-    }
-
-    public void carrega_clientes(String string) {
-        this.listaclientes = new HashMap<>();
-        BufferedReader inStream = null;
-
-        try {
-            inStream = new BufferedReader(new FileReader(string));
-            String text = null;
-
-            while ((text = inStream.readLine()) != null) {
-
-                this.listaclientes.put(text, new Cliente(text));
-            }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-
-        };
-
+    
+    public void addCliente(String text){
+        this.listaclientes.put(text, new Cliente(text));
     }
 
     public void vendasValidas() {
@@ -152,21 +103,9 @@ public class Hipermercado implements Serializable{
     public int nvendasValidas(){
         return this.vendasValid.size();
     }
-
-    public Venda parseLinhaVenda(String linha) {
-
-        String[] line = null;
-
-        line = linha.split(" ");
-
-        for (int i = 0; i < 7; i++) {
-            line[i].trim();
-        }
-
-        Venda v = new Venda(line[0], Float.parseFloat(line[1]), Integer.parseInt(line[2]), line[3], line[4], Integer.parseInt(line[5]), Integer.parseInt(line[6]));
-
-       
-        return v;
+    
+    public void addVenda(Venda v){
+        this.vendasCarr.add(v);
     }
 
     public int vendasUnidades() {

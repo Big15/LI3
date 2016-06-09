@@ -1,5 +1,6 @@
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -24,9 +25,9 @@ public class GereVendas {
         int count = 0;
         int i = 1;
         float valor = 0, f1 = 0, f2 = 0, f3 = 0;
-        DecimalFormat df = new DecimalFormat();
+        /*DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(2);
-        System.out.println(df.format(decimalNumber));
+        System.out.println(df.format(decimalNumber));*/
         System.out.println("Mês\tProdutos Comprados\tFacturacao Total\tFilial 1\tFilial 2\tFilial 3\tClientes");
         for (ArrayList<Venda> cena : comprasmes.values()) {
             for (Venda v : cena) {
@@ -53,6 +54,75 @@ public class GereVendas {
         }
         //System.out.println("Mês " + i + ":" + count);
     }
+    
+    public static Venda parseLinhaVenda(String linha) {
+
+        String[] line = null;
+
+        line = linha.split(" ");
+
+        for (int i = 0; i < 7; i++) {
+            line[i].trim();
+        }
+
+        Venda v = new Venda(line[0], Float.parseFloat(line[1]), Integer.parseInt(line[2]), line[3], line[4], Integer.parseInt(line[5]), Integer.parseInt(line[6]));
+
+       
+        return v;
+    }
+    
+    public static void carrega_vendas(String string, Hipermercado main) {
+        BufferedReader inStream = null;
+
+        try {
+            inStream = new BufferedReader(new FileReader(string));
+            String text = null;
+
+            while ((text = inStream.readLine()) != null) {
+                main.addVenda(parseLinhaVenda(text));
+            }
+            main.vendasValidas();
+
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+
+        };
+    }
+    
+    public static void carrega_clientes(String string, Hipermercado main) {
+        BufferedReader inStream = null;
+
+        try {
+            inStream = new BufferedReader(new FileReader(string));
+            String text = null;
+
+            while ((text = inStream.readLine()) != null) {
+
+                main.addCliente(text);
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+
+        };
+
+    }
+    
+        public static void carrega_produtos(String string, Hipermercado main) {
+        BufferedReader inStream = null;
+        try {
+            inStream = new BufferedReader(new FileReader(string));
+            String text = null;
+
+            while ((text = inStream.readLine()) != null) {
+                main.addProduto(text);
+
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+
+        };
+
+    }    
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         int lifetime = 1, load = 0;
@@ -88,18 +158,18 @@ public class GereVendas {
 
                 System.out.println("Ficheiro " + fileProdutos);
                 Crono.start();
-                main.carrega_produtos(fileProdutos);
+                carrega_produtos(fileProdutos, main);
                 Crono.stop();
                 System.out.println("Tempo: " + Crono.print() + " segundos");
                 System.out.println("Ficheiro " + fileClientes);
                 Crono.start();
 
-                main.carrega_clientes(fileClientes);
+                carrega_clientes(fileClientes, main);
                 Crono.stop();
                 System.out.println("Tempo: " + Crono.print() + " segundos");
                 System.out.println("Ficheiro " + fileVendas);
                 Crono.start();
-                main.carrega_vendas(fileVendas);
+                carrega_vendas(fileVendas, main);
                 Crono.stop();
                 TreeMap<Integer, ArrayList<Venda>> comprasmes = main.parseAllLinhasToMap();
                 System.out.println("Tempo: " + Crono.print() + " segundos");
