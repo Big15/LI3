@@ -192,7 +192,7 @@ public class Hipermercado implements Serializable{
         return i;
     }
 
-    public int preco0(ArrayList<Venda> vendas, HashMap<String, Cliente> clientes, HashMap<String, Produto> produtos) {
+    public static int preco0(ArrayList<Venda> vendas, HashMap<String, Cliente> clientes, HashMap<String, Produto> produtos) {
         ArrayList<Venda> totalvendas = vendasValidas(vendas, clientes, produtos);
         int i = 0;
 
