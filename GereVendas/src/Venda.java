@@ -1,3 +1,5 @@
+package gerevendas;
+
 
 import java.util.*;
 
@@ -5,13 +7,13 @@ public class Venda {
 
     private String codP;
     private String codC;
-    private double preco;
+    private float preco;
     private int filial;
     private int uni;
     private int mes;
     private String promo;
 
-    public Venda(String codP, double preco, int uni, String p, String codC, int mes, int filial){
+    public Venda(String codP, float preco, int uni, String p, String codC, int mes, int filial){
         this.codP = codP;
         this.codC = codC;
         this.preco = preco;
@@ -24,7 +26,7 @@ public class Venda {
     public Venda() {
         this.codP = new String();
         this.codC = new String();
-        this.preco = 0.0;
+        this.preco = 0.0f;
         this.filial = 0;
         this.uni = 0;
         this.mes = 0;
@@ -49,7 +51,7 @@ public class Venda {
         return codC;
     }
 
-    public double getPreco() {
+    public float getPreco() {
         return preco;
     }
 
@@ -87,12 +89,12 @@ public class Venda {
     public String toString() {
         StringBuilder s = new StringBuilder("-----Venda-----\n");
 
-        s.append(" Código do Produto:" + this.getCodP() + "\n");
+        s.append(" Código do Produto:" + this.getCodP()+"\n");
         s.append(" Código do Cliente:" + this.getCodC() + "\n");
-        s.append(" Filial:" + this.getFilial() + "\n");
-        s.append(" Preço:" + this.getPreco() + "\n");
-        s.append(" Promoção(P) ou Normal(N):" + this.getPromo()+"\n");
-        s.append(" Unidades vendidas:" + this.getUni() + "\n");
+     //   s.append(" Filial:" + this.getFilial() + "\n");
+     //   s.append(" Preço:" + this.getPreco() + "\n");
+     //   s.append(" Promoção(P) ou Normal(N):" + this.getPromo()+"\n");
+     //   s.append(" Unidades vendidas:" + this.getUni() + "\n");
         s.append(" Mês da Venda:" + this.getMes() + "\n");
 
         return s.toString();
