@@ -1,3 +1,10 @@
+
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,124 +25,30 @@ import java.util.logging.Logger;
  *
  * @author Demo
  */
-public class Hipermercado implements Serializable{
+public class Hipermercado implements Serializable {
 
     private ArrayList<Venda> vendasCarr;
     private ArrayList<Venda> vendasValid;
     private HashMap<String, Cliente> listaclientes;
-    private HashMap<String, Produto> listaprodutos;
+    private TreeMap<String, Produto> listaprodutos;
     private TreeMap<String, ArrayList<Venda>> vendascliente;
+    public TreeMap<Integer, ArrayList<Venda>> comprasmes;
+    private TreeSet<Venda> semrepetidos;
 
-
-   
-    
-    public Hipermercado(){
+    public Hipermercado() {
         this.vendasCarr = new ArrayList<>();
         this.vendasValid = new ArrayList<>();
         this.listaclientes = new HashMap<>();
-        this.listaprodutos = new HashMap<>();
-        this.vendascliente = new TreeMap<>();              
-    }
-    
-    
-    
-     public void gravaObj(String fich) throws IOException {
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fich));
-        oos.writeObject(this);
-        
-        
-        oos.flush();
-        oos.close();
-    }
-    
-    
-    
-
-    public static Hipermercado leObj(String fich) throws IOException, ClassNotFoundException {
-        Hipermercado te;
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fich))) {
-            te = (Hipermercado) ois.readObject();
-        }
-        return te;
+        this.listaprodutos = new TreeMap<>();
+        this.vendascliente = new TreeMap<>();
     }
 
-    public static Hipermercado initApp() {
-        Hipermercado imo;
-        String fileClientes = null, fileVendas = null, fileProdutos = null;
-        try {
-            imo = Hipermercado.leObj("estado.tabemp");
-            fileClientes="Clientes.txt";
-            fileProdutos="Produtos.txt";
-            fileVendas="Vendas_1M";
-        } catch (IOException e) {
-            imo = new Hipermercado();
-            System.out.println("Não existem dados gravados|\nErro de leitura.");
-        } catch (ClassNotFoundException e) {
-            imo = new Hipermercado();
-            System.out.println("Não é possível ler os dados!\nFicheiro com formato desconhecido.");
-        } catch (ClassCastException e) {
-            imo = new Hipermercado();
-            System.out.println("Não é possível ler os dados!\nErro de formato.");
-        }
-        return imo;
-    }
-   
-
-    public void carrega_produtos(String string) {
-        BufferedReader inStream = null;
-        this.listaprodutos = new HashMap<>();
-
-        try {
-            inStream = new BufferedReader(new FileReader(string));
-            String text = null;
-
-            while ((text = inStream.readLine()) != null) {
-                this.listaprodutos.put(text, new Produto(text));
-
-            }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-
-        };
-
+    public void addProduto(String text) {
+        this.listaprodutos.put(text, new Produto(text));
     }
 
-    public void carrega_vendas(String string) {
-        this.vendasCarr = new ArrayList<>();
-        BufferedReader inStream = null;
-
-        try {
-            inStream = new BufferedReader(new FileReader(string));
-            String text = null;
-
-            while ((text = inStream.readLine()) != null) {
-                this.vendasCarr.add(parseLinhaVenda(text));
-            }
-            this.vendasValidas();
-
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-
-        };
-    }
-
-    public void carrega_clientes(String string) {
-        this.listaclientes = new HashMap<>();
-        BufferedReader inStream = null;
-
-        try {
-            inStream = new BufferedReader(new FileReader(string));
-            String text = null;
-
-            while ((text = inStream.readLine()) != null) {
-
-                this.listaclientes.put(text, new Cliente(text));
-            }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-
-        };
-
+    public void addCliente(String text) {
+        this.listaclientes.put(text, new Cliente(text));
     }
 
     public void vendasValidas() {
@@ -148,30 +61,31 @@ public class Hipermercado implements Serializable{
             }
         }
     }
-    
-    public int nvendasValidas(){
+
+    public int nvendasValidas() {
         return this.vendasValid.size();
     }
 
-    public Venda parseLinhaVenda(String linha) {
+    public void vendasInvalidas() {
+        int i = 0;
+        ArrayList<Venda> invalidas = new ArrayList<>();
 
-        String[] line = null;
-
-        line = linha.split(" ");
-
-        for (int i = 0; i < 7; i++) {
-            line[i].trim();
+        for (Venda v : this.vendasCarr) {
+            if (!(this.listaclientes.containsKey(v.getCodC()) && this.listaprodutos.containsKey(v.getCodP()))) {
+                invalidas.add(v.clone());
+            }
         }
 
-        Venda v = new Venda(line[0], Float.parseFloat(line[1]), Integer.parseInt(line[2]), line[3], line[4], Integer.parseInt(line[5]), Integer.parseInt(line[6]));
+        System.out.println("/*** Vendas inválidas: " + invalidas.size() + "                                                                                                    ***\\");
+    }
 
-       
-        return v;
+    public void addVenda(Venda v) {
+        this.vendasCarr.add(v);
     }
 
     public int vendasUnidades() {
         int i = 0;
-        for(Venda v: this.vendasValid){
+        for (Venda v : this.vendasValid) {
             i += v.getUni();
         }
         return i;
@@ -228,47 +142,45 @@ public class Hipermercado implements Serializable{
     }
 
     public int prodNcomprados() {
-        TreeSet<String> aux = new TreeSet<>();
+
+        TreeMap<String, Produto> novo = this.listaprodutos;
+        Produto p = new Produto();
 
         for (Venda v : this.vendasValid) {
-            aux.add(v.getCodP());
+            p.setCodP(v.getCodP());
+            novo.remove(v.getCodP(), p);
+
         }
 
-        return this.listaprodutos.size() - aux.size();
+        return novo.size();
 
     }
-    
-    public int nProds(){
+
+    public int nProds() {
         return this.listaprodutos.size();
     }
-    
-    public int nClie(){
+
+    public int nClie() {
         return this.listaclientes.size();
     }
+
+    public int vendasDup() {
+        Set<Venda> novo = new HashSet<>();
+        int total;
+
+        novo.addAll(this.vendasCarr);
+
+        total = (this.vendasCarr.size() - novo.size());
+
+        return total;
+    }
+
+    public boolean existeProduto(Produto p) {
+        return this.listaprodutos.values().contains(p);
+    }
     
-/*
-    public static ArrayList<Venda> parseAllLinhas(ArrayList<String> linhas, HashMap<String, Cliente> clientes, HashMap<String, Produto> produtos) {
-        ArrayList<Venda> array = new ArrayList<>();
+  
 
-        for (String s : linhas) {
-            array.add(parseLinhaVenda(s, clientes, produtos));
-        }
-        System.out.println("Tempo: " + Crono.print() + " segundos");
-        return array;
-    }
-
-    public static TreeMap<String, ArrayList<Venda>> parseAllLinhasToSet(ArrayList<Venda> linhas) {
-        TreeMap<String, ArrayList<Venda>> array = new TreeMap<>();
-        ArrayList<Venda> novo = new ArrayList<>();
-
-        for (Venda s : linhas) {
-            novo.add(s.clone());
-            array.put(s.getCodC(), novo);
-        }
-        System.out.println("Tempo: " + Crono.print() + " segundos");
-        return array;
-    }
-*/
     public TreeMap<Integer, ArrayList<Venda>> parseAllLinhasToMap() {
         TreeMap<Integer, ArrayList<Venda>> array = new TreeMap<>();
         ArrayList<Venda> novo = new ArrayList<>();
@@ -287,42 +199,176 @@ public class Hipermercado implements Serializable{
         return array;
     }
 
-    public int vendasDup() {
-        Set<Venda> novo = new HashSet<>();
+    public ParQuery1 querie1() {
         int total;
+        ParQuery1 c = new ParQuery1();
 
-        novo.addAll(this.vendasCarr);
+        TreeMap<String, Produto> novo = this.listaprodutos;
+        Produto p = new Produto();
 
-        total = (this.vendasCarr.size() - novo.size());
+        for (Venda v : this.vendasValid) {
+            p.setCodP(v.getCodP());
+            novo.remove(v.getCodP(), p);
 
-        return total;
+        }
+
+        total = novo.size();
+        c.setTotal(total);
+        c.setListaprodutos(novo);
+
+        return c;
+
     }
     
-  //Estatísticas para registados nas estruturas:
-/*
-    public void comprasMes(){
-        TreeMap<Integer, ArrayList<Venda>> comprasmes = hiper.parseAllLinhasToMap(totalvendas);
-        int count=0;
-        int i=1;
-           
-                
-                    for(ArrayList<Venda> cena: comprasmes.values()){
-                    for(Venda v: cena){
-                        if(v.getMes()==i)
-                            count++;
+    public float factAux(ArrayList<Venda> vendas){
+        float fact=0.0f;
+        
+        for(Venda v: vendas)
+            fact+=v.getPreco()*v.getUni();
+    
+        return fact;
+    }
+
+    public ParQuery4 query4(String codP) {
+        ParQuery4 p4= new ParQuery4();
+        int ncompm;
+        int nprod=0;
+        int i = 1;
+        float fact = 0.0f;
+        float facta=0.0f;
+        ArrayList<Integer> nvcompras = new ArrayList<>();
+        ArrayList<Integer> clidis = new ArrayList<>();
+        ArrayList<Float> factmes = new ArrayList<>();
+      
+        ArrayList<Venda> ven = new ArrayList<>();
+        ArrayList<Venda> vCodp = new ArrayList<>();
+        HashSet<String> clidt = new HashSet<>();
+
+
+        for (Integer c : this.comprasmes.keySet()) {
+            ven = this.comprasmes.get(c);
+
+            for (Venda v : ven) {
+                if (v.getCodP().equals(codP)) {
+                    vCodp.add(v.clone());
+                    clidt.add(v.getCodC());
                     
-                    else{
-                           System.out.println("Mês " +i + ":"+ count); 
-                           count=1;
-                           i++;
-                            }
-                    }
+                    
                 }
-                    System.out.println("Mês " +i + ":"+ count); 
                 
-                 
-                
-    
+               
+                nprod = clidt.size();
+            }
+            fact=factAux(vCodp);
+            factmes.add(fact);
+            clidt=new HashSet<>();
+            ncompm = vCodp.size();
+            nvcompras.add(ncompm);
+            
+            clidis.add(nprod);
+            vCodp = new ArrayList<>();
+            
+        }
+
+        
+
+      
+
+        
+        for (Float a : factmes) {
+            facta += a;
+        }
+
+        p4 = new ParQuery4(nvcompras, clidis, factmes, facta);
+
+        return p4;
     }
-*/
+
+    public ParQuery3 Query3(String cliente) {
+        ParQuery3 p3= new ParQuery3();
+       int ncompm = 0;
+        int nprod = 0;
+        int i = 1;
+        float fact = 0.0f;
+        float facta = 0.0f;
+        ArrayList<Integer> nvcompras = new ArrayList<>();
+        ArrayList<Integer> prodis = new ArrayList<>();
+        ArrayList<Float> factmes = new ArrayList<>();
+        float t_facturado = 0.0f;
+        ArrayList<Venda> ven = new ArrayList<>();
+        ArrayList<Venda> vCodp = new ArrayList<>();
+        HashSet<String> prodt = new HashSet<>();
+
+
+        for (Integer c : this.comprasmes.keySet()) {
+            ven = this.comprasmes.get(c);
+
+            for (Venda v : ven) {
+                if (v.getCodC().equals(cliente)) {
+                    vCodp.add(v.clone());
+                    prodt.add(v.getCodP());
+                    
+                    
+                }
+                nprod = prodt.size();
+            }
+            fact=factAux(vCodp);
+            factmes.add(fact);
+        
+            prodt=new HashSet<>();
+            ncompm = vCodp.size();
+            nvcompras.add(ncompm);
+            
+            prodis.add(nprod);
+            vCodp = new ArrayList<>();
+
+        }
+        
+        for(Float f: factmes){
+            facta+=f;
+        }
+
+        
+
+        p3 = new ParQuery3(nvcompras, prodis,facta);
+
+        return p3;
+    }
+    
+    
+   
+
+    public TreeMap<Integer, ParQuery2> query2(int mes) {
+        TreeMap<Integer, ParQuery2> tree = new TreeMap<>();
+        ParQuery2 par = new ParQuery2();
+        Cliente c = new Cliente();
+        HashSet<Cliente> cli = new HashSet<>();
+        ArrayList<Venda> ven = new ArrayList<>();
+        int totvemes = 0;
+
+        if (this.comprasmes.containsKey(mes)) {
+            ven = this.comprasmes.get(mes);
+            totvemes = ven.size();
+
+            for (Venda v : ven) {
+                c = new Cliente(v.getCodC());
+                cli.add(c.clone());
+            }
+        }
+        par = new ParQuery2(cli.size(), totvemes);
+        tree.put(mes, par);
+
+        return tree;
+    }
+    
+    public int quantAux(ArrayList<Venda> vendas){
+        int qt=0;
+            for(Venda v: vendas)
+                qt+=v.getUni();
+            
+            return qt;
+    }
+    
+    
+
 }
